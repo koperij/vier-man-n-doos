@@ -223,9 +223,18 @@
     cursor: pointer;
   }
   .vote-btn svg { width: 15px; height: 15px; }
+  .vote-btn .vote-label { font-size: 0.8rem; }
   .vote-btn.voted { background: var(--accent-soft); border-color: var(--accent); color: var(--accent); box-shadow: var(--glow-accent); }
   .vote-btn.voted svg { fill: var(--accent); }
   .vote-btn:active { transform: scale(0.96); }
+
+  .voter-chips-row { display: flex; flex-wrap: wrap; gap: 0.35rem; margin-top: 0.55rem; }
+  .voter-chip {
+    font-size: 0.74rem; font-weight: 600; color: var(--accent);
+    background: var(--accent-soft); border: 1px solid var(--accent);
+    padding: 0.18rem 0.5rem; border-radius: 999px;
+  }
+  .voter-chips-empty { font-size: 0.76rem; color: var(--ink-faint); font-style: italic; }
 
   .play-stat { font-size: 0.82rem; color: var(--ink-dim); font-variant-numeric: tabular-nums; }
   .play-stat strong { color: var(--ink); font-weight: 600; }
@@ -794,9 +803,7 @@
       BGG_GAMES = cached.games;
       bggRefreshStatus.textContent = 'Laatst bijgewerkt ' + relativeTimeAgo(cached.at);
     } else {
-      bggRefreshStatus.textContent = 'Bezig met eerste keer ophalen bij BGG…';
-      // eerste keer: automatisch op de achtergrond verversen zodat foto's/spelersaantallen meteen beschikbaar zijn
-      setTimeout(function () { refreshBggLive(); }, 400);
+      bggRefreshStatus.textContent = 'Nog niet ververst — lukt dit niet, upload gewoon zelf een foto bij een spel.';
     }
   })();
 
@@ -951,7 +958,7 @@
     }).then(function () {
       bggRefreshStatus.textContent = 'Bijgewerkt · zonet';
     }).catch(function (err) {
-      bggRefreshStatus.textContent = 'Kon BGG niet verversen (probeer straks opnieuw).';
+      bggRefreshStatus.textContent = 'BGG blokkeert dit vaak automatisch — upload liever zelf een foto bij het spel.';
     }).finally(function () {
       bggRefreshBtn.disabled = false;
       bggRefreshBtn.classList.remove('spinning');
@@ -1218,7 +1225,11 @@
           return '<span class="win-chip">' + ICON_TROPHY + esc(w.name) + ' · ' + w.count + '</span>';
         }).join('') + '</div>'
       : '<p class="no-plays">Nog geen potjes gelogd — wie durft er als eerste?</p>';
-    var voteTitle = (st.voters && st.voters.length) ? 'Gestemd door ' + st.voters.join(', ') : 'Nog geen stemmen';
+    var voteLabel = st.votedByMe ? 'Gestemd' : 'Stem';
+    var voteBtnHtml = '<button class="vote-btn' + (st.votedByMe ? ' voted' : '') + '" data-id="' + g.id + '">' + ICON_STAR + '<span>' + st.voteCount + '</span><span class="vote-label">' + voteLabel + '</span></button>';
+    var voterChipsHtml = (st.voters && st.voters.length)
+      ? '<div class="voter-chips-row">' + st.voters.map(function (n) { return '<span class="voter-chip">' + esc(n) + '</span>'; }).join('') + '</div>'
+      : '<div class="voter-chips-row voter-chips-empty">Nog niemand gestemd — wees de eerste!</div>';
     var addedByHtml = g.addedBy ? '<div class="added-by">toegevoegd door ' + esc(g.addedBy) + '</div>' : '';
     var thumbHtml = g.imageUrl
       ? '<img class="card-thumb" src="' + esc(g.imageUrl) + '" alt="" loading="lazy" onerror="this.style.display=\'none\'" />'
@@ -1254,10 +1265,11 @@
         notesHtml +
         plannedRow +
         '<div class="stats-row">' +
-          '<button class="vote-btn' + (st.votedByMe ? ' voted' : '') + '" data-id="' + g.id + '" title="' + esc(voteTitle) + '">' + ICON_STAR + '<span>' + st.voteCount + '</span></button>' +
+          voteBtnHtml +
           '<span class="play-stat"><strong>' + st.playCount + '×</strong> gespeeld · ' + lastPlayedText + '</span>' +
           '<button class="expand-btn" data-id="' + g.id + '" aria-expanded="false">Potje loggen' + ICON_CHEV + '</button>' +
         '</div>' +
+        voterChipsHtml +
         '<div class="panel" id="panel-' + g.id + '" hidden>' +
           winChips +
           '<form class="play-form" data-id="' + g.id + '">' +
