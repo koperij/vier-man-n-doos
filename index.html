@@ -174,17 +174,27 @@
     transition: border-color 0.2s ease, transform 0.15s ease;
   }
   .card:hover { border-color: var(--accent); }
-  .card-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 0.6rem; }
-  .card-top-media { display: flex; align-items: center; gap: 0.8rem; min-width: 0; flex: 1; }
+  .card-top { display: flex; flex-wrap: wrap; align-items: flex-start; justify-content: space-between; gap: 0.4rem 0.6rem; }
+  .card-top-media { display: flex; align-items: center; gap: 0.8rem; min-width: 0; flex: 1 1 auto; }
   .card-thumb {
     flex: none; width: 76px; height: 76px; border-radius: 12px; object-fit: cover;
     background: var(--surface-2); border: 2px solid var(--border);
     box-shadow: 0 3px 10px var(--shadow);
   }
   .card-title-wrap { min-width: 0; }
-  .card-title { font-size: 0.92rem; margin: 0; line-height: 1.6; }
+  .card-title { font-size: 0.92rem; margin: 0; line-height: 1.6; overflow-wrap: break-word; word-break: break-word; }
   .added-by { font-size: 0.74rem; color: var(--ink-faint); margin-top: 0.15rem; }
-  .card-top-actions { display: flex; align-items: center; gap: 0.15rem; flex: none; margin-top: 0.1rem; }
+  .card-top-actions { display: flex; align-items: center; gap: 0.1rem; flex: none; margin-top: 0.1rem; }
+
+  /* Op smalle schermen komt de titel niet lang genoeg door om naast de actie-iconen
+     te passen (het pixelfont is erg breed); daarom krijgen media en iconen elk hun
+     eigen rij zodat niets meer over elkaar heen loopt. */
+  @media (max-width: 520px) {
+    html { font-size: 13px; }
+    .card-top-media { flex: 1 1 100%; }
+    .card-top-actions { flex: 1 1 100%; justify-content: flex-end; margin-top: 0.2rem; }
+    .card-thumb { width: 60px; height: 60px; border-radius: 10px; }
+  }
   .rank-btns { display: flex; flex-direction: column; margin-right: 0.1rem; }
   .rank-btn { border: none; background: transparent; color: var(--ink-faint); width: 1.9rem; height: 1.5rem; display: flex; align-items: center; justify-content: center; cursor: pointer; padding: 0; touch-action: manipulation; }
   .rank-btn:disabled { opacity: 0.3; cursor: default; }
