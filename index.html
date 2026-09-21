@@ -209,6 +209,8 @@
     border-radius: 999px;
     white-space: nowrap;
   }
+  .pill-category { color: var(--magenta); background: rgba(255, 62, 201, 0.14); border: 1px solid rgba(255, 62, 201, 0.4); font-weight: 600; }
+  .pill-weight { color: var(--gold); background: var(--gold-soft); border: 1px solid rgba(255, 200, 87, 0.4); }
 
   .notes { font-size: 0.85rem; color: var(--ink-dim); margin: 0.5rem 0 0; font-style: italic; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
 
@@ -850,6 +852,7 @@
   var selectedBggBestWith = '';
   var selectedBggRating = '';
   var selectedBggWeight = '';
+  var selectedBggCategory = '';
   var selectedBggMinPlayers = null;
   var selectedBggMaxPlayers = null;
 
@@ -981,13 +984,22 @@
               if (avgEl && parseFloat(avgEl.getAttribute('value')) > 0) rating = parseFloat(avgEl.getAttribute('value')).toFixed(1);
               if (avgWeightEl && parseFloat(avgWeightEl.getAttribute('value')) > 0) weight = parseFloat(avgWeightEl.getAttribute('value')).toFixed(1);
             }
+            var categories = [];
+            var linkEls = it.getElementsByTagName('link');
+            for (var li = 0; li < linkEls.length; li++) {
+              if (linkEls[li].getAttribute('type') === 'boardgamecategory') {
+                var cv = linkEls[li].getAttribute('value');
+                if (cv) categories.push(cv);
+              }
+            }
             detailMap[id] = {
               minPlayers: minP ? parseInt(minP.getAttribute('value'), 10) : null,
               maxPlayers: maxP ? parseInt(maxP.getAttribute('value'), 10) : null,
               image: img ? img.textContent : null,
               bestWith: extractBestWith(it),
               rating: rating,
-              weight: weight
+              weight: weight,
+              category: categories.slice(0, 2).join(' / ') || null
             };
           }
         });
@@ -1008,6 +1020,7 @@
       if (d.bestWith && d.bestWith !== g.bestWith) patch.bestWith = d.bestWith;
       if (d.rating && d.rating !== g.rating) patch.rating = d.rating;
       if (d.weight && d.weight !== g.weight) patch.weight = d.weight;
+      if (d.category && d.category !== g.category) patch.category = d.category;
       if (d.minPlayers != null) patch.minPlayers = d.minPlayers;
       if (d.maxPlayers != null) patch.maxPlayers = d.maxPlayers;
       if (Object.keys(patch).length) updates.push(db.doc('games/' + g.id).update(patch).catch(function () {}));
@@ -1030,7 +1043,7 @@
           return {
             id: id, title: g.title, owners: g.owners,
             minPlayers: d.minPlayers, maxPlayers: d.maxPlayers,
-            image: d.image, bestWith: d.bestWith, rating: d.rating, weight: d.weight
+            image: d.image, bestWith: d.bestWith, rating: d.rating, weight: d.weight, category: d.category
           };
         }).sort(function (a, b) { return a.title.localeCompare(b.title); });
         BGG_GAMES = list;
@@ -1078,6 +1091,7 @@
     selectedBggBestWith = '';
     selectedBggRating = '';
     selectedBggWeight = '';
+    selectedBggCategory = '';
     selectedBggMinPlayers = null;
     selectedBggMaxPlayers = null;
     editingGameId = null;
@@ -1097,6 +1111,7 @@
     selectedBggBestWith = g.bestWith || '';
     selectedBggRating = g.rating || '';
     selectedBggWeight = g.weight || '';
+    selectedBggCategory = g.category || '';
     selectedBggMinPlayers = (typeof g.minPlayers === 'number') ? g.minPlayers : null;
     selectedBggMaxPlayers = (typeof g.maxPlayers === 'number') ? g.maxPlayers : null;
     addSheetTitle.textContent = 'Spel bewerken';
@@ -1257,6 +1272,7 @@
     selectedBggBestWith = g.bestWith || '';
     selectedBggRating = g.rating || '';
     selectedBggWeight = g.weight || '';
+    selectedBggCategory = g.category || '';
     selectedBggMinPlayers = (typeof g.minPlayers === 'number') ? g.minPlayers : null;
     selectedBggMaxPlayers = (typeof g.maxPlayers === 'number') ? g.maxPlayers : null;
     updatePhotoSuggest();
@@ -1283,6 +1299,7 @@
         bestWith: selectedBggBestWith || '',
         rating: selectedBggRating || '',
         weight: selectedBggWeight || '',
+        category: selectedBggCategory || '',
         notes: document.getElementById('f-notes').value.trim()
       };
       if (selectedBggMinPlayers != null) patch.minPlayers = selectedBggMinPlayers;
@@ -1306,12 +1323,18 @@
       bestWith: selectedBggBestWith || '',
       rating: selectedBggRating || '',
       weight: selectedBggWeight || '',
+      category: selectedBggCategory || '',
       notes: document.getElementById('f-notes').value.trim(),
       addedBy: myName,
       addedAt: Date.now(),
       order: nextOrderValue(),
       plannedDate: '',
-      archived: false
+      archived: false,
+      statsV2: true,
+      voters: {},
+      playCount: 0,
+      lastPlayed: null,
+      winners: {}
     };
     if (selectedBggMinPlayers != null) data.minPlayers = selectedBggMinPlayers;
     if (selectedBggMaxPlayers != null) data.maxPlayers = selectedBggMaxPlayers;
@@ -1337,7 +1360,6 @@
       } else if (tab === 'board') {
         renderLeaderboard();
         lbLoadedOnce = true;
-        refreshAllStats();
       } else if (tab === 'oath') {
         if (!oathLoadedOnce) { oathLoadedOnce = true; subscribeOath(); }
       } else if (tab === 'planned') {
@@ -1347,14 +1369,28 @@
   });
 
   // --- rendering ---
+  function weightLabel(weight) {
+    var w = parseFloat(weight);
+    if (!w) return '';
+    if (w < 1.5) return 'licht';
+    if (w < 2.5) return 'instapklaar';
+    if (w < 3.5) return 'gemiddeld';
+    if (w < 4.5) return 'pittig';
+    return 'zwaar';
+  }
+
   function gameCardHTML(g, pos, total) {
     var st = statsMap[g.id] || { voteCount: 0, votedByMe: false, playCount: 0, lastPlayed: null, winners: [], plays: [], voters: [] };
     var metaPills = '';
+    if (g.category) metaPills += '<span class="pill pill-category">' + esc(g.category) + '</span>';
     if (g.players) metaPills += '<span class="pill">' + esc(g.players) + ' spelers</span>';
     if (g.playTime) metaPills += '<span class="pill">' + esc(g.playTime) + '</span>';
     if (g.bestWith) metaPills += '<span class="pill">best met ' + esc(g.bestWith) + '</span>';
     if (g.rating) metaPills += '<span class="pill">★ ' + esc(g.rating) + '</span>';
-    if (g.weight) metaPills += '<span class="pill">gewicht ' + esc(g.weight) + '</span>';
+    if (g.weight) {
+      var wLabel = weightLabel(g.weight);
+      metaPills += '<span class="pill pill-weight">⚖️ ' + esc(g.weight) + '/5' + (wLabel ? ' · ' + wLabel : '') + '</span>';
+    }
     var bggBtn = g.bggUrl
       ? '<a class="icon-btn bgg-link" href="' + esc(g.bggUrl) + '" target="_blank" rel="noopener" aria-label="BGG-pagina">' + ICON_DICE + '</a>'
       : '';
@@ -1808,84 +1844,135 @@
   wheelOverlay.addEventListener('click', function (e) { if (e.target === wheelOverlay) closeWheel(); });
 
   // --- db actions ---
-  function fetchStats(gameId) {
+  // Stemmen, speelaantallen en winnaars staan rechtstreeks als velden op het spel-
+  // document zelf (voters-map, playCount, lastPlayed, winners-map). Zo is er nog maar
+  // 1 query nodig om alle spellen + hun statistieken te laden, in plaats van 2 losse
+  // subcollectie-reads per spel (wat bij honderden spellen, elke 20s herhaald, de site
+  // traag maakte). Bestaande spellen die dit nog niet hebben worden eenmalig, in kleine
+  // groepjes, op de achtergrond gemigreerd (zie migratePendingGames).
+  function statsFromGame(g) {
+    var voters = g.voters || {};
+    var voterNames = Object.keys(voters).map(function (k) { return voters[k]; });
+    var winnersObj = g.winners || {};
+    var winners = Object.keys(winnersObj).map(function (k) { return winnersObj[k]; })
+      .sort(function (a, b) { return b.count - a.count; });
+    return {
+      voteCount: voterNames.length,
+      votedByMe: !!voters[voterId],
+      voters: voterNames,
+      playCount: g.playCount || 0,
+      lastPlayed: g.lastPlayed || null,
+      winners: winners
+    };
+  }
+
+  function migrateGameStats(gameId) {
     return Promise.all([
       db.collection('games/' + gameId + '/votes').get(),
       db.collection('games/' + gameId + '/plays').get()
     ]).then(function (results) {
       var votesSnap = results[0], playsSnap = results[1];
-      var votedByMe = votesSnap.docs.some(function (d) { return d.id === voterId; });
-      var voters = votesSnap.docs.map(function (d) { var data = d.data() || {}; return data.name || '?'; });
+      var voters = {};
+      votesSnap.docs.forEach(function (d) {
+        var data = d.data() || {};
+        voters[d.id] = data.name || '?';
+      });
       var plays = playsSnap.docs.map(function (d) {
         var data = d.data() || {};
-        return { id: d.id, date: data.date || '', winner: data.winner || '', note: data.note || '' };
-      }).sort(function (a, b) { return (b.date || '').localeCompare(a.date || ''); });
-      var winCounts = {};
+        return { date: data.date || '', winner: data.winner || '' };
+      });
+      var lastPlayed = null;
+      var winners = {};
       plays.forEach(function (p) {
+        if (p.date && (!lastPlayed || p.date > lastPlayed)) lastPlayed = p.date;
         (p.winner || '').split(',').map(function (s) { return s.trim(); }).filter(Boolean).forEach(function (name) {
           var key = name.toLowerCase();
-          if (!winCounts[key]) winCounts[key] = { name: name, count: 0 };
-          winCounts[key].count++;
+          if (!winners[key]) winners[key] = { name: name, count: 0 };
+          winners[key].count++;
         });
       });
-      var winners = Object.keys(winCounts).map(function (k) { return winCounts[k]; }).sort(function (a, b) { return b.count - a.count; });
-      return {
-        voteCount: votesSnap.size,
-        votedByMe: votedByMe,
-        voters: voters,
-        playCount: plays.length,
-        lastPlayed: plays.length ? plays[0].date : null,
-        winners: winners,
-        plays: plays
-      };
-    }).catch(function () {
-      return { voteCount: 0, votedByMe: false, voters: [], playCount: 0, lastPlayed: null, winners: [], plays: [] };
+      return db.doc('games/' + gameId).update({
+        statsV2: true, voters: voters, playCount: plays.length, lastPlayed: lastPlayed, winners: winners
+      });
+    }).catch(function (err) {
+      console.warn('Kon statistieken van spel ' + gameId + ' niet migreren.', err);
     });
   }
 
-  function refreshStatsFor(gameId) {
-    return fetchStats(gameId).then(function (st) {
-      statsMap[gameId] = st;
-      render();
-      if (!document.getElementById('boardView').hidden) renderLeaderboard();
-    });
+  var statsMigrationStarted = false;
+  function migratePendingGames() {
+    var pending = games.filter(function (g) { return !g.statsV2; }).map(function (g) { return g.id; });
+    if (!pending.length) return;
+    var BATCH = 5;
+    (function next(i) {
+      if (i >= pending.length) return;
+      Promise.all(pending.slice(i, i + BATCH).map(migrateGameStats)).then(function () { next(i + BATCH); });
+    })(0);
   }
 
-  function refreshAllStats() {
-    return Promise.all(games.map(function (g) {
-      return fetchStats(g.id).then(function (st) { statsMap[g.id] = st; });
-    })).then(function () {
-      render();
-      if (!document.getElementById('boardView').hidden) renderLeaderboard();
+  // Garandeert dat een spel gemigreerd is vóór we er zelf iets aan toevoegen, zodat een
+  // stem/potje vlak vóór de achtergrondmigratie de bestaande geschiedenis niet overschrijft.
+  function ensureGameMigrated(g) {
+    if (!g || g.statsV2) return Promise.resolve(g);
+    return migrateGameStats(g.id).then(function () {
+      return games.find(function (x) { return x.id === g.id; }) || g;
     });
   }
 
   function toggleVote(id) {
     ensureName(function () {
       if (!db) return;
-      var ref = db.doc('games/' + id + '/votes/' + voterId);
-      var cur = statsMap[id];
-      var wasVoted = cur ? cur.votedByMe : false;
-      if (cur) {
-        statsMap[id] = Object.assign({}, cur, { votedByMe: !wasVoted, voteCount: cur.voteCount + (wasVoted ? -1 : 1) });
+      var g0 = games.find(function (x) { return x.id === id; });
+      if (!g0) return;
+      ensureGameMigrated(g0).then(function (g) {
+        var wasVoted = !!(g.voters && g.voters[voterId]);
+        g.voters = Object.assign({}, g.voters);
+        if (wasVoted) delete g.voters[voterId]; else g.voters[voterId] = myName;
+        g.statsV2 = true;
+        statsMap[id] = statsFromGame(g);
         render();
-      }
-      var op = wasVoted ? ref.delete() : ref.set({ at: Date.now(), name: myName });
-      op.then(function () { refreshStatsFor(id); }).catch(function () { refreshStatsFor(id); });
+        var patch = {};
+        patch['voters.' + voterId] = wasVoted ? firebase.firestore.FieldValue.delete() : myName;
+        patch.statsV2 = true;
+        db.doc('games/' + id).update(patch).catch(function () {
+          alert('Kon stem niet opslaan. Probeer opnieuw.');
+        });
+      });
     });
   }
 
   function logPlay(id, data, formEl) {
     if (!db) return;
-    db.collection('games/' + id + '/plays').add({
-      date: data.date, winner: data.winner, note: data.note, at: Date.now(), loggedBy: myName
+    var g0 = games.find(function (x) { return x.id === id; });
+    var ref = db.doc('games/' + id);
+    ensureGameMigrated(g0).then(function () {
+      return db.runTransaction(function (tx) {
+        return tx.get(ref).then(function (doc) {
+          var d = doc.data() || {};
+          var playCount = (d.playCount || 0) + 1;
+          var lastPlayed = d.lastPlayed || null;
+          if (data.date && (!lastPlayed || data.date > lastPlayed)) lastPlayed = data.date;
+          var winners = Object.assign({}, d.winners || {});
+          (data.winner || '').split(',').map(function (s) { return s.trim(); }).filter(Boolean).forEach(function (name) {
+            var key = name.toLowerCase();
+            var cur = winners[key] || { name: name, count: 0 };
+            winners[key] = { name: cur.name, count: cur.count + 1 };
+          });
+          tx.update(ref, { statsV2: true, playCount: playCount, lastPlayed: lastPlayed, winners: winners });
+        });
+      });
+    }).then(function () {
+      // los potje-record bijhouden als geschiedenis (wordt niet gelezen door de app,
+      // enkel de aggregaten hierboven tellen voor de weergave)
+      return db.collection('games/' + id + '/plays').add({
+        date: data.date, winner: data.winner, note: data.note, at: Date.now(), loggedBy: myName
+      });
     }).then(function () {
       if (formEl) {
         formEl.querySelector('.play-winner').value = '';
         formEl.querySelector('.play-note').value = '';
         formEl.querySelector('.play-date').value = todayStr();
       }
-      refreshStatsFor(id);
     }).catch(function () {
       alert('Kon potje niet opslaan. Probeer opnieuw.');
     });
@@ -1929,20 +2016,18 @@
     var q = db.collection('games').orderBy('addedAt', 'desc').limit(200);
     q.onSnapshot(function (snap) {
       games = snap.docs.map(function (d) { return Object.assign({ id: d.id }, d.data()); });
-      var newIds = games.filter(function (g) { return !(g.id in statsMap); }).map(function (g) { return g.id; });
-      if (newIds.length) {
-        Promise.all(newIds.map(function (gid) { return fetchStats(gid).then(function (st) { statsMap[gid] = st; }); }))
-          .then(render);
-      }
+      games.forEach(function (g) {
+        statsMap[g.id] = g.statsV2
+          ? statsFromGame(g)
+          : (statsMap[g.id] || { voteCount: 0, votedByMe: false, voters: [], playCount: 0, lastPlayed: null, winners: [] });
+      });
       render();
+      if (!document.getElementById('boardView').hidden) renderLeaderboard();
+      if (!statsMigrationStarted) { statsMigrationStarted = true; migratePendingGames(); }
     }, function () {
       statusLine.textContent = 'Kon spellen niet laden. Probeer de pagina opnieuw te openen.';
     });
   }
-
-  setInterval(function () {
-    if (db && games.length && document.visibilityState === 'visible') refreshAllStats();
-  }, 20000);
 
   // --- boot ---
   var firebaseConfig = {
