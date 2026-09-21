@@ -57,6 +57,7 @@
 
   * { box-sizing: border-box; }
   html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
+  html { font-size: 14.5px; }
   body {
     background:
       radial-gradient(ellipse 900px 500px at 15% -10%, rgba(255, 62, 201, 0.16), transparent 60%),
@@ -64,7 +65,8 @@
       var(--bg);
     background-attachment: fixed;
     color: var(--ink);
-    font-family: 'Inter', system-ui, sans-serif;
+    font-family: 'Press Start 2P', 'Inter', system-ui, sans-serif;
+    line-height: 1.7;
     -webkit-tap-highlight-color: transparent;
     overscroll-behavior-y: contain;
     position: relative;
@@ -84,10 +86,11 @@
   }
 
   h1, h2, h3, .display {
-    font-family: 'Fraunces', Georgia, serif;
-    font-weight: 600;
+    font-family: 'Press Start 2P', 'Inter', system-ui, sans-serif;
+    font-weight: 400;
     text-wrap: balance;
-    letter-spacing: -0.01em;
+    letter-spacing: 0;
+    line-height: 1.5;
   }
 
   #app { padding-bottom: 3rem; }
@@ -175,7 +178,7 @@
   .card-top-media { display: flex; align-items: flex-start; gap: 0.65rem; min-width: 0; flex: 1; }
   .card-thumb { flex: none; width: 48px; height: 48px; border-radius: 10px; object-fit: cover; background: var(--surface-2); border: 1px solid var(--border); }
   .card-title-wrap { min-width: 0; }
-  .card-title { font-size: 1.15rem; margin: 0; line-height: 1.25; }
+  .card-title { font-size: 0.92rem; margin: 0; line-height: 1.6; }
   .added-by { font-size: 0.74rem; color: var(--ink-faint); margin-top: 0.15rem; }
   .card-top-actions { display: flex; align-items: center; gap: 0.15rem; flex: none; margin-top: 0.1rem; }
   .rank-btns { display: flex; flex-direction: column; margin-right: 0.1rem; }
@@ -342,7 +345,7 @@
     max-height: 85vh;
     overflow-y: auto;
   }
-  .sheet-inner h2 { margin: 0 0 0.9rem; font-size: 1.2rem; }
+  .sheet-inner h2 { margin: 0 0 0.9rem; font-size: 0.95rem; }
   .field { display: block; margin-bottom: 0.7rem; }
   .field > span { font-size: 0.78rem; font-weight: 600; color: var(--ink-dim); display: block; margin-bottom: 0.3rem; }
   .row2 { display: flex; gap: 0.6rem; }
@@ -425,7 +428,7 @@
     background: var(--surface); border: 3px solid var(--gold);
     box-shadow: var(--glow-gold);
   }
-  .wheel-result { font-size: 1.2rem; font-weight: 700; margin: 0.2rem 0 0.9rem; min-height: 1.6em; color: var(--accent); text-shadow: var(--glow-accent); }
+  .wheel-result { font-size: 0.82rem; font-weight: 400; margin: 0.3rem 0 0.9rem; min-height: 2.6em; line-height: 1.6; color: var(--accent); text-shadow: var(--glow-accent); }
   .wheel-empty { font-size: 0.9rem; color: var(--ink-dim); margin-bottom: 1rem; }
   .wheel-filter { display: flex; align-items: center; justify-content: center; gap: 0.4rem; font-size: 0.82rem; color: var(--ink-dim); margin-bottom: 1rem; }
   .surprise-btn {
@@ -445,6 +448,42 @@
   .surprise-btn svg { width: 17px; height: 17px; }
   .surprise-btn:active { transform: scale(0.98); }
 
+  /* Coin insert (wheel spin trigger) */
+  .coin-slot-wrap { display: flex; justify-content: center; margin-bottom: 0.9rem; }
+  .coin-insert-btn {
+    position: relative; display: flex; flex-direction: column; align-items: center; gap: 0.5rem;
+    background: none; border: none; cursor: pointer; padding: 0.3rem;
+  }
+  .coin-insert-btn:disabled { cursor: default; }
+  .coin { font-size: 2.1rem; line-height: 1; filter: drop-shadow(0 0 8px rgba(255, 200, 87, 0.6)); transform: translateY(0) rotate(0deg); }
+  .coin.dropping { animation: coin-drop 0.48s ease-in forwards; }
+  @keyframes coin-drop {
+    0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+    75% { transform: translateY(30px) rotate(200deg); opacity: 1; }
+    100% { transform: translateY(30px) rotate(200deg); opacity: 0; }
+  }
+  .coin-slot {
+    width: 56px; height: 12px; border-radius: 6px;
+    background: var(--bg); border: 2px solid var(--border);
+    box-shadow: inset 0 2px 5px rgba(0,0,0,0.6);
+    position: relative;
+  }
+  .coin-slot::after {
+    content: ''; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+    width: 30px; height: 3px; background: var(--ink); border-radius: 2px; opacity: 0.3;
+  }
+  .coin-label {
+    font-size: 0.6rem; color: var(--gold); text-shadow: var(--glow-gold);
+    animation: coin-label-blink 1.2s steps(1) infinite;
+  }
+  @keyframes coin-label-blink { 0%, 49% { opacity: 1; } 50%, 100% { opacity: 0.3; } }
+
+  .wheel-icon {
+    position: absolute; top: 50%; left: 50%; width: 0; height: 0;
+    font-size: 1.3rem; transform-origin: 0 0;
+    filter: drop-shadow(0 1px 2px rgba(0,0,0,0.7));
+  }
+
   /* BGG live refresh */
   .bgg-refresh-row { display: flex; align-items: center; gap: 0.5rem; margin-top: 0.5rem; }
   .bgg-refresh-btn {
@@ -461,7 +500,7 @@
 
   /* Oath */
   .oath-intro { margin-bottom: 0.9rem; }
-  .oath-intro h2 { margin: 0 0 0.2rem; font-size: 1.3rem; }
+  .oath-intro h2 { margin: 0 0 0.5rem; font-size: 1rem; }
   .oath-sub { font-size: 0.85rem; color: var(--ink-dim); margin: 0; }
   .oath-form {
     background: var(--surface); border: 1px solid var(--border); border-radius: 16px;
@@ -503,6 +542,9 @@
   }
   .upload-preview { width: 40px; height: 40px; border-radius: 8px; object-fit: cover; border: 1px solid var(--border); display: none; }
   .upload-preview.show { display: block; }
+  .photo-suggest-row { margin-top: 0.5rem; }
+  .photo-suggest-link { color: var(--accent); font-size: 0.76rem; text-decoration: underline; display: inline-block; }
+  .photo-suggest-hint { display: block; font-size: 0.68rem; color: var(--ink-faint); margin-top: 0.25rem; line-height: 1.6; }
 
   /* Planned tab */
   .planned-card {
@@ -618,6 +660,10 @@
         <input type="file" id="photoFileInput" accept="image/*" style="display:none;" />
         <img id="uploadPreview" class="upload-preview" alt="" />
       </div>
+      <div class="photo-suggest-row">
+        <a href="#" target="_blank" rel="noopener" id="photoSuggestLink" class="photo-suggest-link">🔍 Zoek foto's voor "<span id="photoSuggestTitle">dit spel</span>"</a>
+        <span class="photo-suggest-hint">opent een beeldzoekopdracht — sleep de foto die je wil op je toestel op en upload 'm hierboven</span>
+      </div>
       <label class="field"><span>Notitie (optioneel)</span><textarea id="f-notes" placeholder="Waarom willen we dit spelen?"></textarea></label>
       <div class="sheet-actions">
         <button type="button" class="btn btn-ghost" id="cancelAdd">Annuleren</button>
@@ -651,9 +697,15 @@
         <div id="wheelDisc" class="wheel-disc"><div class="wheel-center"></div></div>
       </div>
       <p id="wheelResult" class="wheel-result"></p>
+      <div class="coin-slot-wrap">
+        <button type="button" id="wheelSpin" class="coin-insert-btn" aria-label="Werp een munt in om te draaien">
+          <span class="coin" id="wheelCoin">🪙</span>
+          <span class="coin-slot"></span>
+          <span class="coin-label">INSERT COIN</span>
+        </button>
+      </div>
       <div class="sheet-actions">
         <button type="button" class="btn btn-ghost" id="wheelClose">Sluiten</button>
-        <button type="button" class="btn btn-primary" id="wheelSpin">Draai het rad</button>
       </div>
     </div>
   </div>
@@ -740,6 +792,7 @@
   var wheelBody = document.getElementById('wheelBody');
   var wheelDisc = document.getElementById('wheelDisc');
   var wheelResult = document.getElementById('wheelResult');
+  var wheelCoin = document.getElementById('wheelCoin');
   var wheelUnplayedOnly = document.getElementById('wheelUnplayedOnly');
   var wheelSpinning = false;
   var surpriseBtnText = document.getElementById('surpriseBtnText');
@@ -759,6 +812,14 @@
   var oathLoadedOnce = false;
   var oathEntries = [];
   var uploadPreview = document.getElementById('uploadPreview');
+  var photoSuggestLink = document.getElementById('photoSuggestLink');
+  var photoSuggestTitle = document.getElementById('photoSuggestTitle');
+  function updatePhotoSuggest() {
+    var t = document.getElementById('f-title').value.trim();
+    photoSuggestTitle.textContent = t || 'dit spel';
+    var q = (t ? t + ' ' : '') + 'board game box art';
+    photoSuggestLink.href = 'https://www.google.com/search?tbm=isch&q=' + encodeURIComponent(q);
+  }
   var searchInput = document.getElementById('searchInput');
   var playersFilterEl = document.getElementById('playersFilter');
   var archiveToggleBtn = document.getElementById('archiveToggleBtn');
@@ -1004,7 +1065,9 @@
     document.getElementById('addForm').reset();
     uploadPreview.src = '';
     uploadPreview.classList.remove('show');
+    updatePhotoSuggest();
   }
+  document.getElementById('f-title').addEventListener('input', updatePhotoSuggest);
 
   function openEditSheet(id) {
     var g = games.find(function (x) { return x.id === id; });
@@ -1020,6 +1083,7 @@
     document.getElementById('f-title').value = g.title || '';
     document.getElementById('f-players').value = g.players || '';
     document.getElementById('f-time').value = g.playTime || '';
+    updatePhotoSuggest();
     document.getElementById('f-bgg').value = g.bggUrl || '';
     document.getElementById('f-rulebook').value = g.rulebookUrl || '';
     document.getElementById('f-image').value = g.imageUrl || '';
@@ -1117,6 +1181,7 @@
     selectedBggWeight = g.weight || '';
     selectedBggMinPlayers = (typeof g.minPlayers === 'number') ? g.minPlayers : null;
     selectedBggMaxPlayers = (typeof g.maxPlayers === 'number') ? g.maxPlayers : null;
+    updatePhotoSuggest();
     bggSearch.value = '';
     bggResults.hidden = true;
     bggResults.innerHTML = '';
@@ -1348,8 +1413,11 @@
     var visibleBase = showArchived ? games : nonArchived;
     var list = visibleBase.filter(function (g) {
       if (query) {
-        var hay = (g.title + ' ' + (g.addedBy || '')).toLowerCase();
-        if (hay.indexOf(query) === -1) return false;
+        var titleLower = (g.title || '').toLowerCase();
+        var titleWords = titleLower.split(/\s+/);
+        var titleMatches = titleWords.some(function (w) { return w.indexOf(query) === 0; });
+        var addedByMatches = (g.addedBy || '').toLowerCase().indexOf(query) === 0;
+        if (!titleMatches && !addedByMatches) return false;
       }
       return matchesPlayersFilter(g, playersVal);
     }).sort(function (a, b) { return idxMap[a.id] - idxMap[b.id]; });
@@ -1555,7 +1623,13 @@
   });
 
   // --- wheel of fortune ---
-  var WHEEL_COLORS = ['#2f6b4f', '#3f8362', '#c9a13b', '#8a5a2b', '#4a7a8c', '#6a4a8c', '#b0532f', '#3f6b8c'];
+  var WHEEL_COLORS = ['#FF3EC9', '#2BE8CB', '#FFC857', '#FF5C8A', '#7C4DFF', '#3DDC97', '#FF8C42', '#4FC3F7', '#FF6B6B', '#A78BFA'];
+  var WHEEL_ICONS = ['🎲', '🗡️', '🏰', '🚀', '🐉', '🃏', '🎯', '🧩', '🏆', '⚔️', '🛡️', '🔮', '👑', '💣', '🎩', '🦊', '🐺', '🧙', '⚓', '🎪'];
+  function iconForGame(title) {
+    var hash = 0;
+    for (var i = 0; i < title.length; i++) hash = (hash * 31 + title.charCodeAt(i)) >>> 0;
+    return WHEEL_ICONS[hash % WHEEL_ICONS.length];
+  }
 
   function wheelPool() {
     var pool = games.filter(function (g) { return !g.archived; });
@@ -1573,6 +1647,11 @@
     wheelDisc.style.background = 'conic-gradient(' + stops + ')';
     wheelDisc.style.transform = 'rotate(0deg)';
     wheelDisc.dataset.rotation = '0';
+    var iconsHtml = pool.map(function (g, i) {
+      var mid = i * slice + slice / 2;
+      return '<span class="wheel-icon" style="transform: rotate(' + mid + 'deg) translate(0, -96px) rotate(' + (-mid) + 'deg);">' + iconForGame(g.title) + '</span>';
+    }).join('');
+    wheelDisc.innerHTML = '<div class="wheel-center"></div>' + iconsHtml;
   }
 
   function openWheel() {
@@ -1618,7 +1697,18 @@
 
   surpriseBtn.addEventListener('click', openWheel);
   document.getElementById('wheelClose').addEventListener('click', closeWheel);
-  document.getElementById('wheelSpin').addEventListener('click', spinWheel);
+  document.getElementById('wheelSpin').addEventListener('click', function () {
+    if (wheelSpinning) return;
+    var pool = wheelPool();
+    if (!pool.length) return;
+    wheelCoin.classList.remove('dropping');
+    void wheelCoin.offsetWidth;
+    wheelCoin.classList.add('dropping');
+    setTimeout(function () {
+      spinWheel();
+      wheelCoin.classList.remove('dropping');
+    }, 480);
+  });
   wheelUnplayedOnly.addEventListener('change', function () {
     if (wheelOverlay.hidden || wheelSpinning) return;
     var pool = wheelPool();
