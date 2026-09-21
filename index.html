@@ -143,8 +143,16 @@
     box-shadow: 0 1px 3px var(--shadow);
   }
   .card-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 0.6rem; }
+  .card-top-media { display: flex; align-items: flex-start; gap: 0.65rem; min-width: 0; flex: 1; }
+  .card-thumb { flex: none; width: 48px; height: 48px; border-radius: 10px; object-fit: cover; background: var(--surface-2); border: 1px solid var(--border); }
+  .card-title-wrap { min-width: 0; }
   .card-title { font-size: 1.15rem; margin: 0; line-height: 1.25; }
-  .card-top-actions { display: flex; align-items: center; gap: 0.3rem; flex: none; margin-top: 0.1rem; }
+  .added-by { font-size: 0.74rem; color: var(--ink-faint); margin-top: 0.15rem; }
+  .card-top-actions { display: flex; align-items: center; gap: 0.15rem; flex: none; margin-top: 0.1rem; }
+  .rank-btns { display: flex; flex-direction: column; margin-right: 0.1rem; }
+  .rank-btn { border: none; background: transparent; color: var(--ink-faint); width: 1.3rem; height: 1rem; display: flex; align-items: center; justify-content: center; cursor: pointer; padding: 0; }
+  .rank-btn:hover { color: var(--ink); }
+  .rank-btn svg { width: 12px; height: 12px; }
   .icon-btn {
     border: none; background: transparent; color: var(--ink-faint);
     width: 1.8rem; height: 1.8rem; border-radius: 8px;
@@ -326,6 +334,64 @@
   .bgg-hint { font-size: 0.74rem; color: var(--ink-faint); margin-top: 0.3rem; display: block; }
 
   a.rulebook-link { color: var(--accent); }
+
+  /* Planned date */
+  .planned-row { display: flex; align-items: center; gap: 0.5rem; margin-top: 0.5rem; flex-wrap: wrap; }
+  .planned-badge {
+    display: flex; align-items: center; gap: 0.3rem;
+    font-size: 0.78rem; font-weight: 600; color: var(--accent);
+    background: var(--accent-soft); padding: 0.22rem 0.55rem; border-radius: 999px;
+  }
+  .planned-badge svg { width: 13px; height: 13px; }
+  .plan-btn { border: none; background: transparent; color: var(--ink-faint); font: inherit; font-size: 0.78rem; font-weight: 600; cursor: pointer; padding: 0.2rem 0.3rem; text-decoration: underline; }
+  .plan-btn:hover { color: var(--ink); }
+
+  /* Wheel of fortune */
+  .wheel-overlay {
+    position: fixed; inset: 0; z-index: 80;
+    display: flex; align-items: center; justify-content: center;
+    background: rgba(10, 14, 12, 0.65);
+    padding: 1.2rem;
+  }
+  .wheel-overlay[hidden] { display: none; }
+  .wheel-card {
+    background: var(--surface); border-radius: 20px; padding: 1.4rem;
+    width: 100%; max-width: 420px; text-align: center;
+    max-height: 92vh; overflow-y: auto;
+  }
+  .wheel-card h2 { margin: 0 0 0.9rem; font-size: 1.2rem; }
+  .wheel-wrap { position: relative; width: 260px; height: 260px; margin: 0 auto 1.1rem; }
+  .wheel-pointer {
+    position: absolute; top: -6px; left: 50%; transform: translateX(-50%);
+    width: 0; height: 0; z-index: 2;
+    border-left: 12px solid transparent; border-right: 12px solid transparent;
+    border-top: 20px solid var(--gold);
+  }
+  .wheel-disc {
+    width: 260px; height: 260px; border-radius: 50%;
+    border: 4px solid var(--surface);
+    box-shadow: 0 2px 10px var(--shadow);
+    transition: transform 4.5s cubic-bezier(0.15, 0.65, 0.15, 1);
+    position: relative;
+  }
+  .wheel-center {
+    position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+    width: 34px; height: 34px; border-radius: 50%;
+    background: var(--surface); border: 3px solid var(--gold);
+  }
+  .wheel-result { font-size: 1.15rem; font-weight: 700; margin: 0.2rem 0 0.9rem; min-height: 1.6em; }
+  .wheel-empty { font-size: 0.9rem; color: var(--ink-dim); margin-bottom: 1rem; }
+  .wheel-filter { display: flex; align-items: center; justify-content: center; gap: 0.4rem; font-size: 0.82rem; color: var(--ink-dim); margin-bottom: 1rem; }
+  .surprise-btn {
+    display: flex; align-items: center; gap: 0.4rem; justify-content: center;
+    width: 100%; margin-bottom: 0.9rem;
+    background: var(--gold-soft); color: var(--gold);
+    border: 1px dashed var(--gold);
+    font: inherit; font-weight: 700; font-size: 0.9rem;
+    padding: 0.6rem; border-radius: 12px; cursor: pointer;
+  }
+  .surprise-btn svg { width: 17px; height: 17px; }
+  .surprise-btn:active { transform: scale(0.98); }
 </style>
 
 <div id="app">
@@ -345,6 +411,10 @@
 
   <main id="gamesView">
     <p id="statusLine">Bezig met laden…</p>
+    <button id="surpriseBtn" class="surprise-btn" hidden>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M12 3v9l6 3"/></svg>
+      Verrassingsspel — laat het rad kiezen
+    </button>
     <div id="gameList" class="game-list"></div>
   </main>
 
@@ -361,7 +431,7 @@
       <span>Zoek in jullie BGG-collecties</span>
       <input id="bggSearch" autocomplete="off" placeholder="typ een titel…" />
       <div id="bggResults" class="bgg-results" hidden></div>
-      <span class="bgg-hint">Doorzoekt de collecties van Astcfx, Stevebuffalo, Woutervanoverwalle en Robin · vult titel, spelers en (indien op BGG) rulebook-link in</span>
+      <span class="bgg-hint">Doorzoekt de collecties van Astcfx, Stevebuffalo, Woutervanoverwalle en Robin · vult titel, spelers en BGG-pagina in</span>
     </div>
     <form id="addForm">
       <label class="field"><span>Titel</span><input id="f-title" required placeholder="bv. Wingspan" /></label>
@@ -369,7 +439,9 @@
         <label class="field"><span>Spelers</span><input id="f-players" placeholder="2–4" /></label>
         <label class="field"><span>Speeltijd</span><input id="f-time" placeholder="60 min" /></label>
       </div>
-      <label class="field"><span>Link naar rulebook</span><input id="f-rulebook" type="url" placeholder="https://…" /></label>
+      <label class="field"><span>BGG-pagina (spelinfo)</span><input id="f-bgg" type="url" placeholder="https://boardgamegeek.com/boardgame/…" /></label>
+      <label class="field"><span>Link naar rulebook (PDF)</span><input id="f-rulebook" type="url" placeholder="https://…" /></label>
+      <label class="field"><span>Afbeelding URL (optioneel)</span><input id="f-image" type="url" placeholder="https://…" /></label>
       <label class="field"><span>Notitie (optioneel)</span><textarea id="f-notes" placeholder="Waarom willen we dit spelen?"></textarea></label>
       <div class="sheet-actions">
         <button type="button" class="btn btn-ghost" id="cancelAdd">Annuleren</button>
@@ -389,6 +461,25 @@
         <button type="submit" class="btn btn-primary">Opslaan</button>
       </div>
     </form>
+  </div>
+</div>
+
+<div id="wheelOverlay" class="wheel-overlay" hidden>
+  <div class="wheel-card">
+    <h2>Verrassingsspel</h2>
+    <div id="wheelEmpty" class="wheel-empty" hidden>Voeg eerst een paar spellen toe om het rad te laten draaien.</div>
+    <div id="wheelBody">
+      <label class="wheel-filter"><input type="checkbox" id="wheelUnplayedOnly" /> Enkel nog niet gespeelde spellen</label>
+      <div class="wheel-wrap">
+        <div class="wheel-pointer"></div>
+        <div id="wheelDisc" class="wheel-disc"><div class="wheel-center"></div></div>
+      </div>
+      <p id="wheelResult" class="wheel-result"></p>
+      <div class="sheet-actions">
+        <button type="button" class="btn btn-ghost" id="wheelClose">Sluiten</button>
+        <button type="button" class="btn btn-primary" id="wheelSpin">Draai het rad</button>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -418,6 +509,8 @@
   var ICON_TRASH = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 7h16M9 7V4.5A1.5 1.5 0 0 1 10.5 3h3A1.5 1.5 0 0 1 15 4.5V7m2 0-.6 12.2A2 2 0 0 1 14.4 21H9.6a2 2 0 0 1-2-1.8L7 7"/></svg>';
   var ICON_CHEV = '<svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M6 9l6 6 6-6"/></svg>';
   var ICON_EMPTY = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="3" width="18" height="18" rx="4"/><path d="M8 12h8M12 8v8" stroke-linecap="round"/></svg>';
+  var ICON_DICE = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="4"/><circle cx="8" cy="8" r="1.1" fill="currentColor" stroke="none"/><circle cx="16" cy="8" r="1.1" fill="currentColor" stroke="none"/><circle cx="8" cy="16" r="1.1" fill="currentColor" stroke="none"/><circle cx="16" cy="16" r="1.1" fill="currentColor" stroke="none"/><circle cx="12" cy="12" r="1.1" fill="currentColor" stroke="none"/></svg>';
+  var ICON_CALENDAR = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3.5" y="5" width="17" height="16" rx="3"/><path d="M8 3v4M16 3v4M3.5 10h17" stroke-linecap="round"/></svg>';
 
   function esc(s) {
     return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) {
@@ -462,6 +555,14 @@
   var lbStatus = document.getElementById('lbStatus');
   var addSheet = document.getElementById('addSheet');
   var nameSheet = document.getElementById('nameSheet');
+  var surpriseBtn = document.getElementById('surpriseBtn');
+  var wheelOverlay = document.getElementById('wheelOverlay');
+  var wheelEmpty = document.getElementById('wheelEmpty');
+  var wheelBody = document.getElementById('wheelBody');
+  var wheelDisc = document.getElementById('wheelDisc');
+  var wheelResult = document.getElementById('wheelResult');
+  var wheelUnplayedOnly = document.getElementById('wheelUnplayedOnly');
+  var wheelSpinning = false;
   var lbLoadedOnce = false;
 
   function ensureName(cb) {
@@ -526,7 +627,7 @@
     var g = BGG_GAMES[parseInt(row.dataset.idx, 10)];
     if (!g) return;
     document.getElementById('f-title').value = g.title;
-    if (g.id) document.getElementById('f-rulebook').value = 'https://boardgamegeek.com/boardgame/' + g.id;
+    if (g.id) document.getElementById('f-bgg').value = 'https://boardgamegeek.com/boardgame/' + g.id;
     if (g.minPlayers && g.maxPlayers) {
       document.getElementById('f-players').value = g.minPlayers === g.maxPlayers ? String(g.minPlayers) : (g.minPlayers + '–' + g.maxPlayers);
     }
@@ -545,10 +646,14 @@
       title: title,
       players: document.getElementById('f-players').value.trim(),
       playTime: document.getElementById('f-time').value.trim(),
+      bggUrl: document.getElementById('f-bgg').value.trim(),
       rulebookUrl: document.getElementById('f-rulebook').value.trim(),
+      imageUrl: document.getElementById('f-image').value.trim(),
       notes: document.getElementById('f-notes').value.trim(),
       addedBy: myName,
-      addedAt: Date.now()
+      addedAt: Date.now(),
+      order: nextOrderValue(),
+      plannedDate: ''
     };
     db.collection('games').add(data).then(function () {
       document.getElementById('addForm').reset();
@@ -574,11 +679,15 @@
   });
 
   // --- rendering ---
-  function gameCardHTML(g) {
-    var st = statsMap[g.id] || { voteCount: 0, votedByMe: false, playCount: 0, lastPlayed: null, winners: [], plays: [] };
+  function gameCardHTML(g, pos, total) {
+    var st = statsMap[g.id] || { voteCount: 0, votedByMe: false, playCount: 0, lastPlayed: null, winners: [], plays: [], voters: [] };
     var metaPills = '';
     if (g.players) metaPills += '<span class="pill">' + esc(g.players) + ' spelers</span>';
     if (g.playTime) metaPills += '<span class="pill">' + esc(g.playTime) + '</span>';
+    if (g.bestWith) metaPills += '<span class="pill">best met ' + esc(g.bestWith) + '</span>';
+    var bggBtn = g.bggUrl
+      ? '<a class="icon-btn bgg-link" href="' + esc(g.bggUrl) + '" target="_blank" rel="noopener" aria-label="BGG-pagina">' + ICON_DICE + '</a>'
+      : '';
     var rulebookBtn = g.rulebookUrl
       ? '<a class="icon-btn rulebook-link" href="' + esc(g.rulebookUrl) + '" target="_blank" rel="noopener" aria-label="Rulebook">' + ICON_BOOK + '</a>'
       : '';
@@ -589,19 +698,40 @@
           return '<span class="win-chip">' + ICON_TROPHY + esc(w.name) + ' · ' + w.count + '</span>';
         }).join('') + '</div>'
       : '<p class="no-plays">Nog geen potjes gelogd.</p>';
+    var voteTitle = (st.voters && st.voters.length) ? 'Gestemd door ' + st.voters.join(', ') : 'Nog geen stemmen';
+    var addedByHtml = g.addedBy ? '<div class="added-by">toegevoegd door ' + esc(g.addedBy) + '</div>' : '';
+    var thumbHtml = g.imageUrl
+      ? '<img class="card-thumb" src="' + esc(g.imageUrl) + '" alt="" loading="lazy" onerror="this.style.display=\'none\'" />'
+      : '';
+    var rankBtns =
+      '<div class="rank-btns">' +
+        '<button class="rank-btn" data-dir="up" data-id="' + g.id + '" aria-label="Hoger zetten"' + (pos === 0 ? ' disabled' : '') + '><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M5 15l7-7 7 7"/></svg></button>' +
+        '<button class="rank-btn" data-dir="down" data-id="' + g.id + '" aria-label="Lager zetten"' + (pos === total - 1 ? ' disabled' : '') + '><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M5 9l7 7 7-7"/></svg></button>' +
+      '</div>';
+    var plannedRow = g.plannedDate
+      ? '<div class="planned-row"><span class="planned-badge">' + ICON_CALENDAR + esc(formatDate(g.plannedDate)) + '</span><button type="button" class="plan-btn" data-id="' + g.id + '" data-cur="' + esc(g.plannedDate) + '">wijzigen</button><button type="button" class="plan-btn" data-id="' + g.id + '" data-clear="1">verwijderen</button></div>'
+      : '<div class="planned-row"><button type="button" class="plan-btn" data-id="' + g.id + '" data-cur="">+ speeldatum plannen</button></div>';
 
     return (
       '<article class="card" data-id="' + g.id + '">' +
         '<div class="card-top">' +
-          '<h3 class="card-title">' + esc(g.title) + '</h3>' +
-          '<div class="card-top-actions">' + rulebookBtn +
+          '<div class="card-top-media">' +
+            rankBtns +
+            thumbHtml +
+            '<div class="card-title-wrap">' +
+              '<h3 class="card-title">' + esc(g.title) + '</h3>' +
+              addedByHtml +
+            '</div>' +
+          '</div>' +
+          '<div class="card-top-actions">' + bggBtn + rulebookBtn +
             '<button class="icon-btn delete-btn" data-id="' + g.id + '" aria-label="Verwijderen">' + ICON_TRASH + '</button>' +
           '</div>' +
         '</div>' +
         (metaPills ? '<div class="meta-row">' + metaPills + '</div>' : '') +
         notesHtml +
+        plannedRow +
         '<div class="stats-row">' +
-          '<button class="vote-btn' + (st.votedByMe ? ' voted' : '') + '" data-id="' + g.id + '">' + ICON_STAR + '<span>' + st.voteCount + '</span></button>' +
+          '<button class="vote-btn' + (st.votedByMe ? ' voted' : '') + '" data-id="' + g.id + '" title="' + esc(voteTitle) + '">' + ICON_STAR + '<span>' + st.voteCount + '</span></button>' +
           '<span class="play-stat"><strong>' + st.playCount + '×</strong> gespeeld · ' + lastPlayedText + '</span>' +
           '<button class="expand-btn" data-id="' + g.id + '" aria-expanded="false">Potje loggen' + ICON_CHEV + '</button>' +
         '</div>' +
@@ -620,20 +750,62 @@
     );
   }
 
+  function orderVal(g) {
+    return (typeof g.order === 'number') ? g.order : (g.addedAt || 0);
+  }
+
+  function nextOrderValue() {
+    if (!games.length) return Date.now();
+    return Math.max.apply(null, games.map(orderVal)) + 1;
+  }
+
+  function sortedGames() {
+    return games.slice().sort(function (a, b) {
+      var oa = orderVal(a), ob = orderVal(b);
+      if (oa !== ob) return oa - ob;
+      var sa = statsMap[a.id], sb = statsMap[b.id];
+      var va = sa ? sa.voteCount : 0, vb = sb ? sb.voteCount : 0;
+      if (vb !== va) return vb - va;
+      return (b.addedAt || 0) - (a.addedAt || 0);
+    });
+  }
+
   function render() {
+    surpriseBtn.hidden = !games.length;
     if (!games.length) {
       statusLine.hidden = true;
       gameList.innerHTML = '<div class="empty-state">' + ICON_EMPTY + '<div>Nog geen spellen op de plank.<br>Voeg het eerste toe met de <strong>+</strong> knop.</div></div>';
       return;
     }
     statusLine.hidden = true;
-    var sorted = games.slice().sort(function (a, b) {
-      var sa = statsMap[a.id], sb = statsMap[b.id];
-      var va = sa ? sa.voteCount : 0, vb = sb ? sb.voteCount : 0;
-      if (vb !== va) return vb - va;
-      return (b.addedAt || 0) - (a.addedAt || 0);
+    var sorted = sortedGames();
+    gameList.innerHTML = sorted.map(function (g, i) { return gameCardHTML(g, i, sorted.length); }).join('');
+  }
+
+  function moveRank(id, dir) {
+    var sorted = sortedGames();
+    var idx = sorted.findIndex(function (g) { return g.id === id; });
+    if (idx === -1) return;
+    var swapIdx = dir === 'up' ? idx - 1 : idx + 1;
+    if (swapIdx < 0 || swapIdx >= sorted.length) return;
+    var a = sorted[idx], b = sorted[swapIdx];
+    var oa = orderVal(a), ob = orderVal(b);
+    if (oa === ob) { oa = ob + (dir === 'up' ? -1 : 1); }
+    a.order = ob; b.order = oa;
+    render();
+    Promise.all([
+      db.doc('games/' + a.id).update({ order: ob }),
+      db.doc('games/' + b.id).update({ order: oa })
+    ]).catch(function () { /* volgende sync corrigeert */ });
+  }
+
+  function setPlannedDate(id, dateStr) {
+    if (!db) return;
+    var g = games.find(function (x) { return x.id === id; });
+    if (g) { g.plannedDate = dateStr; render(); }
+    db.doc('games/' + id).update({ plannedDate: dateStr }).catch(function () {
+      alert('Kon datum niet opslaan. Probeer opnieuw.');
     });
-    gameList.innerHTML = sorted.map(gameCardHTML).join('');
   }
 
   function renderLeaderboard() {
@@ -687,6 +859,23 @@
       if (confirm('Dit spel van de plank verwijderen?')) deleteGame(delBtn.dataset.id);
       return;
     }
+    var rankBtn = e.target.closest('.rank-btn');
+    if (rankBtn) {
+      if (rankBtn.disabled) return;
+      moveRank(rankBtn.dataset.id, rankBtn.dataset.dir);
+      return;
+    }
+    var planBtn = e.target.closest('.plan-btn');
+    if (planBtn) {
+      if (planBtn.dataset.clear) { setPlannedDate(planBtn.dataset.id, ''); return; }
+      var current = planBtn.dataset.cur || todayStr();
+      var input = prompt('Wanneer plannen jullie dit spel? (jjjj-mm-dd)', current);
+      if (input === null) return;
+      input = input.trim();
+      if (input && !/^\d{4}-\d{2}-\d{2}$/.test(input)) { alert('Gebruik het formaat jjjj-mm-dd.'); return; }
+      setPlannedDate(planBtn.dataset.id, input);
+      return;
+    }
   });
 
   gameList.addEventListener('submit', function (e) {
@@ -701,6 +890,76 @@
     ensureName(function () { logPlay(id, { date: date, winner: winner, note: note }, form); });
   });
 
+  // --- wheel of fortune ---
+  var WHEEL_COLORS = ['#2f6b4f', '#3f8362', '#c9a13b', '#8a5a2b', '#4a7a8c', '#6a4a8c', '#b0532f', '#3f6b8c'];
+
+  function wheelPool() {
+    if (!wheelUnplayedOnly.checked) return games;
+    return games.filter(function (g) { var st = statsMap[g.id]; return !st || !st.playCount; });
+  }
+
+  function buildWheelDisc(pool) {
+    var n = pool.length;
+    var slice = 360 / n;
+    var stops = pool.map(function (g, i) {
+      var color = WHEEL_COLORS[i % WHEEL_COLORS.length];
+      return color + ' ' + (i * slice) + 'deg ' + ((i + 1) * slice) + 'deg';
+    }).join(', ');
+    wheelDisc.style.background = 'conic-gradient(' + stops + ')';
+    wheelDisc.style.transform = 'rotate(0deg)';
+    wheelDisc.dataset.rotation = '0';
+  }
+
+  function openWheel() {
+    wheelResult.textContent = '';
+    wheelSpinning = false;
+    var pool = wheelPool();
+    if (!pool.length) {
+      wheelEmpty.hidden = false;
+      wheelBody.hidden = true;
+    } else {
+      wheelEmpty.hidden = true;
+      wheelBody.hidden = false;
+      buildWheelDisc(pool);
+    }
+    wheelOverlay.hidden = false;
+  }
+
+  function closeWheel() { wheelOverlay.hidden = true; }
+
+  function spinWheel() {
+    if (wheelSpinning) return;
+    var pool = wheelPool();
+    if (!pool.length) return;
+    wheelSpinning = true;
+    wheelResult.textContent = '';
+    var n = pool.length;
+    var slice = 360 / n;
+    var targetIdx = Math.floor(Math.random() * n);
+    var currentRotation = parseFloat(wheelDisc.dataset.rotation || '0');
+    // land pointer (fixed at top) in the middle of the target slice, after several full spins
+    var targetAngle = targetIdx * slice + slice / 2;
+    var extraSpins = 5 + Math.floor(Math.random() * 3);
+    var finalRotation = currentRotation - (currentRotation % 360) + extraSpins * 360 + (360 - targetAngle);
+    wheelDisc.style.transform = 'rotate(' + finalRotation + 'deg)';
+    wheelDisc.dataset.rotation = String(finalRotation);
+    setTimeout(function () {
+      wheelSpinning = false;
+      wheelResult.textContent = pool[targetIdx].title;
+    }, 4600);
+  }
+
+  surpriseBtn.addEventListener('click', openWheel);
+  document.getElementById('wheelClose').addEventListener('click', closeWheel);
+  document.getElementById('wheelSpin').addEventListener('click', spinWheel);
+  wheelUnplayedOnly.addEventListener('change', function () {
+    if (wheelOverlay.hidden || wheelSpinning) return;
+    var pool = wheelPool();
+    if (!pool.length) { wheelEmpty.hidden = false; wheelBody.hidden = true; }
+    else { wheelEmpty.hidden = true; wheelBody.hidden = false; buildWheelDisc(pool); wheelResult.textContent = ''; }
+  });
+  wheelOverlay.addEventListener('click', function (e) { if (e.target === wheelOverlay) closeWheel(); });
+
   // --- db actions ---
   function fetchStats(gameId) {
     return Promise.all([
@@ -709,6 +968,7 @@
     ]).then(function (results) {
       var votesSnap = results[0], playsSnap = results[1];
       var votedByMe = votesSnap.docs.some(function (d) { return d.id === voterId; });
+      var voters = votesSnap.docs.map(function (d) { var data = d.data() || {}; return data.name || '?'; });
       var plays = playsSnap.docs.map(function (d) {
         var data = d.data() || {};
         return { id: d.id, date: data.date || '', winner: data.winner || '', note: data.note || '' };
@@ -725,13 +985,14 @@
       return {
         voteCount: votesSnap.size,
         votedByMe: votedByMe,
+        voters: voters,
         playCount: plays.length,
         lastPlayed: plays.length ? plays[0].date : null,
         winners: winners,
         plays: plays
       };
     }).catch(function () {
-      return { voteCount: 0, votedByMe: false, playCount: 0, lastPlayed: null, winners: [], plays: [] };
+      return { voteCount: 0, votedByMe: false, voters: [], playCount: 0, lastPlayed: null, winners: [], plays: [] };
     });
   }
 
