@@ -3,78 +3,81 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#1C7C74">
+<meta name="theme-color" content="#140F22">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <title>Vier Man, Eén Doos</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400..700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Fraunces:opsz,wght@9..144,400..700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
-  :root {
-    --bg: #EDEFE7;
-    --surface: #FFFFFF;
-    --surface-2: #E1E6D9;
-    --ink: #1B2420;
-    --ink-dim: #5C6A61;
-    --ink-faint: #8B9790;
-    --accent: #1C7C74;
-    --accent-ink: #F3FBF9;
-    --accent-soft: #DCEEEA;
-    --gold: #C77E1F;
-    --gold-soft: #F3E3C8;
-    --red: #B4453F;
-    --red-soft: #F5DEDC;
-    --border: #D2D8C7;
-    --shadow: rgba(24, 34, 28, 0.10);
+  :root, :root[data-theme="dark"] {
+    --bg: #140F22;
+    --bg2: #1B1330;
+    --surface: #1E1832;
+    --surface-2: #2A2246;
+    --ink: #F5F1FF;
+    --ink-dim: #B4A9DA;
+    --ink-faint: #786FA0;
+    --accent: #2BE8CB;
+    --accent-ink: #06251F;
+    --accent-soft: #17453D;
+    --gold: #FFC857;
+    --gold-soft: #4A3714;
+    --red: #FF5C8A;
+    --red-soft: #4A1C2E;
+    --magenta: #FF3EC9;
+    --border: #3A3260;
+    --shadow: rgba(0, 0, 0, 0.55);
+    --glow-accent: 0 0 16px rgba(43, 232, 203, 0.45);
+    --glow-magenta: 0 0 18px rgba(255, 62, 201, 0.45);
+    --glow-gold: 0 0 14px rgba(255, 200, 87, 0.4);
   }
-  @media (prefers-color-scheme: dark) {
-    :root:not([data-theme="light"]) {
-      --bg: #12171A;
-      --surface: #1A2124;
-      --surface-2: #212A2C;
-      --ink: #EAEFE9;
-      --ink-dim: #9AA8A0;
-      --ink-faint: #6B7873;
-      --accent: #4FBDAF;
-      --accent-ink: #08211E;
-      --accent-soft: #1E3733;
-      --gold: #E0A64B;
-      --gold-soft: #3A2E17;
-      --red: #E08A82;
-      --red-soft: #3B2320;
-      --border: #2B3436;
-      --shadow: rgba(0, 0, 0, 0.4);
+  @media (prefers-color-scheme: light) {
+    :root:not([data-theme="dark"]) {
+      --bg: #140F22;
+      --bg2: #1B1330;
+      --surface: #1E1832;
+      --surface-2: #2A2246;
+      --ink: #F5F1FF;
+      --ink-dim: #B4A9DA;
+      --ink-faint: #786FA0;
+      --accent: #2BE8CB;
+      --accent-ink: #06251F;
+      --accent-soft: #17453D;
+      --gold: #FFC857;
+      --gold-soft: #4A3714;
+      --red: #FF5C8A;
+      --red-soft: #4A1C2E;
+      --border: #3A3260;
+      --shadow: rgba(0, 0, 0, 0.55);
     }
-  }
-  :root[data-theme="dark"] {
-    --bg: #12171A;
-    --surface: #1A2124;
-    --surface-2: #212A2C;
-    --ink: #EAEFE9;
-    --ink-dim: #9AA8A0;
-    --ink-faint: #6B7873;
-    --accent: #4FBDAF;
-    --accent-ink: #08211E;
-    --accent-soft: #1E3733;
-    --gold: #E0A64B;
-    --gold-soft: #3A2E17;
-    --red: #E08A82;
-    --red-soft: #3B2320;
-    --border: #2B3436;
-    --shadow: rgba(0, 0, 0, 0.4);
   }
 
   * { box-sizing: border-box; }
   html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
   body {
-    background: var(--bg);
+    background:
+      radial-gradient(ellipse 900px 500px at 15% -10%, rgba(255, 62, 201, 0.16), transparent 60%),
+      radial-gradient(ellipse 900px 600px at 85% 0%, rgba(43, 232, 203, 0.14), transparent 60%),
+      var(--bg);
+    background-attachment: fixed;
     color: var(--ink);
     font-family: 'Inter', system-ui, sans-serif;
     -webkit-tap-highlight-color: transparent;
     overscroll-behavior-y: contain;
+    position: relative;
+    min-height: 100vh;
   }
+  body::before {
+    content: '';
+    position: fixed; inset: 0; pointer-events: none; z-index: 0;
+    background-image: repeating-linear-gradient(0deg, rgba(255,255,255,0.025) 0px, rgba(255,255,255,0.025) 1px, transparent 1px, transparent 3px);
+    mix-blend-mode: overlay;
+    opacity: 0.5;
+  }
+  #app, .sheet, .wheel-overlay { position: relative; z-index: 1; }
   button { touch-action: manipulation; }
   @media (prefers-reduced-motion: reduce) {
     *, *::before, *::after { transition: none !important; animation: none !important; }
@@ -93,17 +96,22 @@
     position: sticky;
     top: env(safe-area-inset-top, 0px);
     z-index: 20;
-    background: var(--bg);
+    background: linear-gradient(180deg, var(--bg2), var(--bg));
     border-bottom: 1px solid var(--border);
     padding: 0.9rem max(16px, env(safe-area-inset-left, 0px)) 0.7rem max(16px, env(safe-area-inset-left, 0px));
   }
   .topbar-row { display: flex; align-items: center; justify-content: space-between; gap: 0.75rem; }
-  .brand { display: flex; align-items: center; gap: 0.5rem; }
-  .brand svg { width: 22px; height: 22px; color: var(--accent); flex: none; }
-  .brand h1 { font-size: 1.35rem; margin: 0; }
+  .brand { display: flex; align-items: center; gap: 0.6rem; }
+  .brand svg { width: 24px; height: 24px; color: var(--accent); flex: none; filter: drop-shadow(0 0 6px rgba(43, 232, 203, 0.6)); }
+  .brand h1 {
+    font-family: 'Press Start 2P', 'Fraunces', Georgia, serif;
+    font-size: 0.82rem; line-height: 1.4; margin: 0; font-weight: 400;
+    color: var(--ink);
+    text-shadow: 0 0 10px rgba(43, 232, 203, 0.55), 0 0 22px rgba(255, 62, 201, 0.25);
+  }
   .add-btn {
     flex: none;
-    width: 2.4rem; height: 2.4rem;
+    width: 2.5rem; height: 2.5rem;
     border-radius: 999px;
     border: none;
     background: var(--accent);
@@ -112,9 +120,10 @@
     line-height: 1;
     display: flex; align-items: center; justify-content: center;
     cursor: pointer;
-    box-shadow: 0 2px 6px var(--shadow);
+    box-shadow: var(--glow-accent), 0 2px 6px var(--shadow);
+    transition: transform 0.15s ease;
   }
-  .add-btn:active { transform: scale(0.94); }
+  .add-btn:active { transform: scale(0.9) rotate(-8deg); }
 
   .tabs {
     display: flex;
@@ -141,7 +150,7 @@
     flex: none;
     white-space: nowrap;
   }
-  .tab.active { background: var(--surface); color: var(--ink); box-shadow: 0 1px 2px var(--shadow); }
+  .tab.active { background: var(--accent); color: var(--accent-ink); box-shadow: var(--glow-accent); }
 
   main { padding: 1rem max(16px, env(safe-area-inset-left, 0px)) 0; max-width: 640px; margin: 0 auto; }
 
@@ -158,8 +167,10 @@
     border: 1px solid var(--border);
     border-radius: 16px;
     padding: 0.95rem 1rem 0.8rem;
-    box-shadow: 0 1px 3px var(--shadow);
+    box-shadow: 0 2px 10px var(--shadow);
+    transition: border-color 0.2s ease, transform 0.15s ease;
   }
+  .card:hover { border-color: var(--accent); }
   .card-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 0.6rem; }
   .card-top-media { display: flex; align-items: flex-start; gap: 0.65rem; min-width: 0; flex: 1; }
   .card-thumb { flex: none; width: 48px; height: 48px; border-radius: 10px; object-fit: cover; background: var(--surface-2); border: 1px solid var(--border); }
@@ -212,7 +223,7 @@
     cursor: pointer;
   }
   .vote-btn svg { width: 15px; height: 15px; }
-  .vote-btn.voted { background: var(--accent-soft); border-color: var(--accent); color: var(--accent); }
+  .vote-btn.voted { background: var(--accent-soft); border-color: var(--accent); color: var(--accent); box-shadow: var(--glow-accent); }
   .vote-btn.voted svg { fill: var(--accent); }
   .vote-btn:active { transform: scale(0.96); }
 
@@ -236,6 +247,7 @@
     background: var(--gold-soft); color: var(--gold);
     font-size: 0.78rem; font-weight: 600;
     padding: 0.22rem 0.55rem; border-radius: 999px;
+    box-shadow: var(--glow-gold);
   }
   .win-chip svg { width: 12px; height: 12px; }
   .no-plays { font-size: 0.82rem; color: var(--ink-faint); margin: 0 0 0.7rem; }
@@ -266,7 +278,7 @@
     padding: 0.55rem 0.9rem;
     cursor: pointer;
   }
-  .btn-primary { background: var(--accent); color: var(--accent-ink); }
+  .btn-primary { background: var(--accent); color: var(--accent-ink); box-shadow: var(--glow-accent); }
   .btn-primary:active { transform: scale(0.98); }
 
   .empty-state {
@@ -275,7 +287,7 @@
     padding: 2.5rem 1rem;
     font-size: 0.95rem;
   }
-  .empty-state svg { width: 40px; height: 40px; color: var(--ink-faint); margin-bottom: 0.75rem; }
+  .empty-state svg { width: 40px; height: 40px; color: var(--accent); margin-bottom: 0.75rem; filter: drop-shadow(0 0 8px rgba(43, 232, 203, 0.5)); }
 
   /* Leaderboard */
   .lb-list { display: flex; flex-direction: column; gap: 0.5rem; }
@@ -369,27 +381,32 @@
   .wheel-overlay {
     position: fixed; inset: 0; z-index: 80;
     display: flex; align-items: center; justify-content: center;
-    background: rgba(10, 14, 12, 0.65);
+    background: rgba(8, 5, 16, 0.78);
     padding: 1.2rem;
   }
   .wheel-overlay[hidden] { display: none; }
   .wheel-card {
-    background: var(--surface); border-radius: 20px; padding: 1.4rem;
+    background: var(--surface); border: 1px solid var(--border); border-radius: 20px; padding: 1.4rem;
     width: 100%; max-width: 420px; text-align: center;
     max-height: 92vh; overflow-y: auto;
+    box-shadow: var(--glow-magenta), 0 8px 30px var(--shadow);
   }
-  .wheel-card h2 { margin: 0 0 0.9rem; font-size: 1.2rem; }
+  .wheel-card h2 {
+    margin: 0 0 0.9rem; font-family: 'Press Start 2P', 'Fraunces', Georgia, serif;
+    font-size: 0.9rem; font-weight: 400; color: var(--gold); text-shadow: var(--glow-gold);
+  }
   .wheel-wrap { position: relative; width: 260px; height: 260px; margin: 0 auto 1.1rem; }
   .wheel-pointer {
-    position: absolute; top: -6px; left: 50%; transform: translateX(-50%);
+    position: absolute; top: -8px; left: 50%; transform: translateX(-50%);
     width: 0; height: 0; z-index: 2;
-    border-left: 12px solid transparent; border-right: 12px solid transparent;
-    border-top: 20px solid var(--gold);
+    border-left: 13px solid transparent; border-right: 13px solid transparent;
+    border-top: 22px solid var(--magenta);
+    filter: drop-shadow(0 0 6px rgba(255, 62, 201, 0.7));
   }
   .wheel-disc {
     width: 260px; height: 260px; border-radius: 50%;
     border: 4px solid var(--surface);
-    box-shadow: 0 2px 10px var(--shadow);
+    box-shadow: var(--glow-accent), 0 2px 10px var(--shadow);
     transition: transform 4.5s cubic-bezier(0.15, 0.65, 0.15, 1);
     position: relative;
   }
@@ -397,17 +414,24 @@
     position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
     width: 34px; height: 34px; border-radius: 50%;
     background: var(--surface); border: 3px solid var(--gold);
+    box-shadow: var(--glow-gold);
   }
-  .wheel-result { font-size: 1.15rem; font-weight: 700; margin: 0.2rem 0 0.9rem; min-height: 1.6em; }
+  .wheel-result { font-size: 1.2rem; font-weight: 700; margin: 0.2rem 0 0.9rem; min-height: 1.6em; color: var(--accent); text-shadow: var(--glow-accent); }
   .wheel-empty { font-size: 0.9rem; color: var(--ink-dim); margin-bottom: 1rem; }
   .wheel-filter { display: flex; align-items: center; justify-content: center; gap: 0.4rem; font-size: 0.82rem; color: var(--ink-dim); margin-bottom: 1rem; }
   .surprise-btn {
     display: flex; align-items: center; gap: 0.4rem; justify-content: center;
     width: 100%; margin-bottom: 0.9rem;
     background: var(--gold-soft); color: var(--gold);
-    border: 1px dashed var(--gold);
+    border: 1px solid var(--gold);
     font: inherit; font-weight: 700; font-size: 0.9rem;
-    padding: 0.6rem; border-radius: 12px; cursor: pointer;
+    padding: 0.65rem; border-radius: 12px; cursor: pointer;
+    box-shadow: var(--glow-gold);
+    animation: surprise-pulse 2.4s ease-in-out infinite;
+  }
+  @keyframes surprise-pulse {
+    0%, 100% { box-shadow: var(--glow-gold); }
+    50% { box-shadow: 0 0 26px rgba(255, 200, 87, 0.65); }
   }
   .surprise-btn svg { width: 17px; height: 17px; }
   .surprise-btn:active { transform: scale(0.98); }
@@ -492,18 +516,18 @@
       <button id="addBtn" class="add-btn" aria-label="Spel toevoegen">+</button>
     </div>
     <div class="tabs" role="tablist">
-      <button class="tab active" data-tab="games" role="tab" aria-selected="true">Spellen</button>
-      <button class="tab" data-tab="board" role="tab" aria-selected="false">Topscore</button>
-      <button class="tab" data-tab="oath" role="tab" aria-selected="false">Oath</button>
-      <button class="tab" data-tab="planned" role="tab" aria-selected="false">Gepland</button>
+      <button class="tab active" data-tab="games" role="tab" aria-selected="true">🎲 Spellen</button>
+      <button class="tab" data-tab="board" role="tab" aria-selected="false">🏆 Topscore</button>
+      <button class="tab" data-tab="oath" role="tab" aria-selected="false">🗡️ Oath</button>
+      <button class="tab" data-tab="planned" role="tab" aria-selected="false">📅 Gepland</button>
     </div>
   </header>
 
   <main id="gamesView">
-    <p id="statusLine">Bezig met laden…</p>
+    <p id="statusLine">Bezig met laden… 🎲</p>
     <button id="surpriseBtn" class="surprise-btn" hidden>
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M12 3v9l6 3"/></svg>
-      Verrassingsspel — laat het rad kiezen
+      <span id="surpriseBtnText">🎰 Kunnen jullie niet kiezen? Draai het rad!</span>
     </button>
     <div class="filter-bar">
       <input id="searchInput" type="search" class="search-input" placeholder="Zoek op titel of wie het toevoegde…" autocomplete="off" />
@@ -522,7 +546,7 @@
   </main>
 
   <main id="boardView" hidden>
-    <p id="lbStatus" class="play-stat" style="margin-bottom:0.8rem;">Bezig met tellen…</p>
+    <p id="lbStatus" class="play-stat" style="margin-bottom:0.8rem;">Bezig met de score op te maken… 🏆</p>
     <div id="leaderboard" class="lb-list"></div>
   </main>
 
@@ -537,7 +561,7 @@
   <main id="oathView" hidden>
     <div class="oath-intro">
       <h2>Oath</h2>
-      <p class="oath-sub">Jullie founding game — hou per potje bij wie Chancellor was en wie won.</p>
+      <p class="oath-sub">De game die het allemaal begon. Hou bij wie de macht greep als Chancellor, en wie er met de eer vandoor ging.</p>
     </div>
     <form id="oathForm" class="oath-form">
       <div class="play-form-row">
@@ -609,7 +633,7 @@
 
 <div id="wheelOverlay" class="wheel-overlay" hidden>
   <div class="wheel-card">
-    <h2>Verrassingsspel</h2>
+    <h2>🎰 Het lot beslist</h2>
     <div id="wheelEmpty" class="wheel-empty" hidden>Voeg eerst een paar spellen toe om het rad te laten draaien.</div>
     <div id="wheelBody">
       <label class="wheel-filter"><input type="checkbox" id="wheelUnplayedOnly" /> Enkel nog niet gespeelde spellen</label>
@@ -709,6 +733,19 @@
   var wheelResult = document.getElementById('wheelResult');
   var wheelUnplayedOnly = document.getElementById('wheelUnplayedOnly');
   var wheelSpinning = false;
+  var surpriseBtnText = document.getElementById('surpriseBtnText');
+  var SURPRISE_PHRASES = [
+    '🎰 Kunnen jullie niet kiezen? Draai het rad!',
+    '🕹️ Insert coin… en laat het lot beslissen!',
+    '🌀 Geen zin om te overleggen? Spin die schijf!',
+    '🎲 Durven jullie het rad te vertrouwen?',
+    '✨ Eén druk op de knop en de keuze is gemaakt!'
+  ];
+  function rollSurpriseCopy() {
+    if (!surpriseBtnText) return;
+    surpriseBtnText.textContent = SURPRISE_PHRASES[Math.floor(Math.random() * SURPRISE_PHRASES.length)];
+  }
+  rollSurpriseCopy();
   var lbLoadedOnce = false;
   var oathLoadedOnce = false;
   var oathEntries = [];
@@ -1145,7 +1182,9 @@
       document.getElementById('boardView').hidden = tab !== 'board';
       document.getElementById('oathView').hidden = tab !== 'oath';
       document.getElementById('plannedView').hidden = tab !== 'planned';
-      if (tab === 'board') {
+      if (tab === 'games') {
+        rollSurpriseCopy();
+      } else if (tab === 'board') {
         renderLeaderboard();
         lbLoadedOnce = true;
         refreshAllStats();
@@ -1178,7 +1217,7 @@
       ? '<div class="win-chips">' + st.winners.map(function (w) {
           return '<span class="win-chip">' + ICON_TROPHY + esc(w.name) + ' · ' + w.count + '</span>';
         }).join('') + '</div>'
-      : '<p class="no-plays">Nog geen potjes gelogd.</p>';
+      : '<p class="no-plays">Nog geen potjes gelogd — wie durft er als eerste?</p>';
     var voteTitle = (st.voters && st.voters.length) ? 'Gestemd door ' + st.voters.join(', ') : 'Nog geen stemmen';
     var addedByHtml = g.addedBy ? '<div class="added-by">toegevoegd door ' + esc(g.addedBy) + '</div>' : '';
     var thumbHtml = g.imageUrl
@@ -1284,7 +1323,7 @@
     archiveToggleBtn.hidden = !ac && !showArchived;
     if (!games.length) {
       statusLine.hidden = true;
-      gameList.innerHTML = '<div class="empty-state">' + ICON_EMPTY + '<div>Nog geen spellen op de plank.<br>Voeg het eerste toe met de <strong>+</strong> knop.</div></div>';
+      gameList.innerHTML = '<div class="empty-state">' + ICON_EMPTY + '<div>De plank is angstaanjagend leeg. 😱<br>Vul \'m met jullie eerste spel via de <strong>+</strong> knop.</div></div>';
       renderPlanned();
       return;
     }
@@ -1303,7 +1342,7 @@
       return matchesPlayersFilter(g, playersVal);
     }).sort(function (a, b) { return idxMap[a.id] - idxMap[b.id]; });
     if (!list.length) {
-      gameList.innerHTML = '<p class="no-results">Geen spellen gevonden.</p>';
+      gameList.innerHTML = '<p class="no-results">Niks gevonden. Zelfs het rad kan dit niet oplossen. 🤷</p>';
     } else {
       gameList.innerHTML = list.map(function (g) { return gameCardHTML(g, idxMap[g.id], fullSorted.length); }).join('');
     }
@@ -1559,7 +1598,9 @@
     wheelDisc.dataset.rotation = String(finalRotation);
     setTimeout(function () {
       wheelSpinning = false;
-      wheelResult.textContent = pool[targetIdx].title;
+      var openers = ['🎉 Het wordt:', '👉 Het lot heeft gesproken:', '🍀 Vanavond spelen jullie:', '🔥 De winnaar is:'];
+      var opener = openers[Math.floor(Math.random() * openers.length)];
+      wheelResult.textContent = opener + ' ' + pool[targetIdx].title;
     }, 4600);
   }
 
@@ -1684,7 +1725,7 @@
     var withDates = games.filter(function (g) { return g.plannedDate && !g.archived; })
       .sort(function (a, b) { return (a.plannedDate || '').localeCompare(b.plannedDate || ''); });
     if (!withDates.length) {
-      listEl.innerHTML = '<p class="no-plays">Nog geen speeldata gepland. Plan er een via een spelkaart bij "Spellen".</p>';
+      listEl.innerHTML = '<p class="no-plays">Nog niks op de kalender. Plan een speelavond via een spelkaart bij "Spellen". 📅</p>';
       return;
     }
     listEl.innerHTML = withDates.map(function (g) {
