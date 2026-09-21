@@ -124,6 +124,9 @@
     padding: 0.25rem;
     border-radius: 999px;
     width: fit-content;
+    max-width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
   }
   .tab {
     border: none;
@@ -135,6 +138,8 @@
     padding: 0.4rem 0.9rem;
     border-radius: 999px;
     cursor: pointer;
+    flex: none;
+    white-space: nowrap;
   }
   .tab.active { background: var(--surface); color: var(--ink); box-shadow: 0 1px 2px var(--shadow); }
 
@@ -438,6 +443,41 @@
   }
   .oath-row-date { font-size: 0.78rem; color: var(--ink-faint); flex: none; width: 4.6rem; }
   .oath-row-body { font-size: 0.88rem; }
+
+  /* Filters */
+  .filter-bar { display: flex; gap: 0.5rem; margin-bottom: 0.8rem; flex-wrap: wrap; }
+  .search-input { flex: 1; min-width: 140px; }
+  .players-filter {
+    font: inherit; font-size: 0.85rem; color: var(--ink);
+    background: var(--surface-2); border: 1px solid var(--border); border-radius: 10px;
+    padding: 0.5rem 0.5rem; flex: none;
+  }
+  .archive-toggle-row { text-align: center; margin: 0.9rem 0 1.4rem; }
+  .archive-toggle-btn {
+    border: none; background: transparent; color: var(--ink-faint);
+    font: inherit; font-size: 0.8rem; text-decoration: underline; cursor: pointer; padding: 0.4rem;
+  }
+  .archive-toggle-btn:hover { color: var(--ink); }
+  .card.archived { opacity: 0.6; }
+  .archived-label { font-size: 0.72rem; color: var(--ink-faint); font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; }
+  .no-results { font-size: 0.85rem; color: var(--ink-faint); text-align: center; padding: 1.5rem 0.5rem; }
+
+  /* Photo upload */
+  .upload-row { display: flex; align-items: center; gap: 0.6rem; margin-top: 0.4rem; }
+  .upload-btn {
+    border: 1px dashed var(--border); background: var(--surface-2); color: var(--ink-dim);
+    font: inherit; font-size: 0.78rem; font-weight: 600; padding: 0.4rem 0.7rem; border-radius: 10px; cursor: pointer;
+  }
+  .upload-preview { width: 40px; height: 40px; border-radius: 8px; object-fit: cover; border: 1px solid var(--border); display: none; }
+  .upload-preview.show { display: block; }
+
+  /* Planned tab */
+  .planned-card {
+    background: var(--surface); border: 1px solid var(--border); border-radius: 14px;
+    padding: 0.8rem 0.9rem; margin-bottom: 0.6rem; display: flex; align-items: center; gap: 0.7rem;
+  }
+  .planned-card .planned-date-big { font-weight: 700; color: var(--accent); font-size: 0.85rem; flex: none; width: 5.4rem; }
+  .planned-card .planned-title { font-weight: 600; }
 </style>
 </head>
 <body>
@@ -455,6 +495,7 @@
       <button class="tab active" data-tab="games" role="tab" aria-selected="true">Spellen</button>
       <button class="tab" data-tab="board" role="tab" aria-selected="false">Topscore</button>
       <button class="tab" data-tab="oath" role="tab" aria-selected="false">Oath</button>
+      <button class="tab" data-tab="planned" role="tab" aria-selected="false">Gepland</button>
     </div>
   </header>
 
@@ -464,12 +505,33 @@
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M12 3v9l6 3"/></svg>
       Verrassingsspel — laat het rad kiezen
     </button>
+    <div class="filter-bar">
+      <input id="searchInput" type="search" class="search-input" placeholder="Zoek op titel of wie het toevoegde…" autocomplete="off" />
+      <select id="playersFilter" class="players-filter">
+        <option value="">Alle spelersaantallen</option>
+        <option value="2">2 spelers</option>
+        <option value="3">3 spelers</option>
+        <option value="4">4 spelers</option>
+        <option value="5">5+ spelers</option>
+      </select>
+    </div>
     <div id="gameList" class="game-list"></div>
+    <div class="archive-toggle-row">
+      <button type="button" id="archiveToggleBtn" class="archive-toggle-btn">Toon gearchiveerde spellen</button>
+    </div>
   </main>
 
   <main id="boardView" hidden>
     <p id="lbStatus" class="play-stat" style="margin-bottom:0.8rem;">Bezig met tellen…</p>
     <div id="leaderboard" class="lb-list"></div>
+  </main>
+
+  <main id="plannedView" hidden>
+    <div class="oath-intro">
+      <h2>Gepland</h2>
+      <p class="oath-sub">Alle spellen met een speeldatum, op volgorde.</p>
+    </div>
+    <div id="plannedList"></div>
   </main>
 
   <main id="oathView" hidden>
@@ -517,7 +579,12 @@
       </div>
       <label class="field"><span>BGG-pagina (spelinfo)</span><input id="f-bgg" type="url" placeholder="https://boardgamegeek.com/boardgame/…" /></label>
       <label class="field"><span>Link naar rulebook (PDF)</span><input id="f-rulebook" type="url" placeholder="https://…" /></label>
-      <label class="field"><span>Afbeelding URL (optioneel)</span><input id="f-image" type="url" placeholder="https://…" /></label>
+      <label class="field"><span>Afbeelding URL (optioneel)</span><input id="f-image" type="text" placeholder="https://…" /></label>
+      <div class="upload-row">
+        <button type="button" id="uploadPhotoBtn" class="upload-btn">Of upload een foto…</button>
+        <input type="file" id="photoFileInput" accept="image/*" style="display:none;" />
+        <img id="uploadPreview" class="upload-preview" alt="" />
+      </div>
       <label class="field"><span>Notitie (optioneel)</span><textarea id="f-notes" placeholder="Waarom willen we dit spelen?"></textarea></label>
       <div class="sheet-actions">
         <button type="button" class="btn btn-ghost" id="cancelAdd">Annuleren</button>
@@ -585,6 +652,8 @@
   var ICON_TRASH = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 7h16M9 7V4.5A1.5 1.5 0 0 1 10.5 3h3A1.5 1.5 0 0 1 15 4.5V7m2 0-.6 12.2A2 2 0 0 1 14.4 21H9.6a2 2 0 0 1-2-1.8L7 7"/></svg>';
   var ICON_CHEV = '<svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M6 9l6 6 6-6"/></svg>';
   var ICON_EDIT = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 20h4L18.5 9.5a2.12 2.12 0 0 0-3-3L5 17v3z"/><path d="M13.5 6.5l4 4"/></svg>';
+  var ICON_ARCHIVE = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="4" width="18" height="4.5" rx="1.2"/><path d="M5 8.5V19a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V8.5M10 13h4"/></svg>';
+  var ICON_UNARCHIVE = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="4" width="18" height="4.5" rx="1.2"/><path d="M5 8.5V19a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V8.5M12 11v4M10 13l2-2 2 2"/></svg>';
   var ICON_EMPTY = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="3" width="18" height="18" rx="4"/><path d="M8 12h8M12 8v8" stroke-linecap="round"/></svg>';
   var ICON_DICE = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="4"/><circle cx="8" cy="8" r="1.1" fill="currentColor" stroke="none"/><circle cx="16" cy="8" r="1.1" fill="currentColor" stroke="none"/><circle cx="8" cy="16" r="1.1" fill="currentColor" stroke="none"/><circle cx="16" cy="16" r="1.1" fill="currentColor" stroke="none"/><circle cx="12" cy="12" r="1.1" fill="currentColor" stroke="none"/></svg>';
   var ICON_CALENDAR = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3.5" y="5" width="17" height="16" rx="3"/><path d="M8 3v4M16 3v4M3.5 10h17" stroke-linecap="round"/></svg>';
@@ -643,9 +712,18 @@
   var lbLoadedOnce = false;
   var oathLoadedOnce = false;
   var oathEntries = [];
+  var uploadPreview = document.getElementById('uploadPreview');
+  var searchInput = document.getElementById('searchInput');
+  var playersFilterEl = document.getElementById('playersFilter');
+  var archiveToggleBtn = document.getElementById('archiveToggleBtn');
+  var showArchived = false;
   var bggRefreshBtn = document.getElementById('bggRefreshBtn');
   var bggRefreshStatus = document.getElementById('bggRefreshStatus');
   var selectedBggBestWith = '';
+  var selectedBggRating = '';
+  var selectedBggWeight = '';
+  var selectedBggMinPlayers = null;
+  var selectedBggMaxPlayers = null;
 
   // --- BGG live refresh ---
   var BGG_USERNAMES = ['Astcfx', 'Stevebuffalo', 'Woutervanoverwalle', 'Robin'];
@@ -768,11 +846,22 @@
             var minP = it.getElementsByTagName('minplayers')[0];
             var maxP = it.getElementsByTagName('maxplayers')[0];
             var img = it.getElementsByTagName('image')[0];
+            var rating = null, weight = null;
+            var statsEl = it.getElementsByTagName('statistics')[0];
+            var ratingsEl = statsEl ? statsEl.getElementsByTagName('ratings')[0] : null;
+            if (ratingsEl) {
+              var avgEl = ratingsEl.getElementsByTagName('average')[0];
+              var avgWeightEl = ratingsEl.getElementsByTagName('averageweight')[0];
+              if (avgEl && parseFloat(avgEl.getAttribute('value')) > 0) rating = parseFloat(avgEl.getAttribute('value')).toFixed(1);
+              if (avgWeightEl && parseFloat(avgWeightEl.getAttribute('value')) > 0) weight = parseFloat(avgWeightEl.getAttribute('value')).toFixed(1);
+            }
             detailMap[id] = {
               minPlayers: minP ? parseInt(minP.getAttribute('value'), 10) : null,
               maxPlayers: maxP ? parseInt(maxP.getAttribute('value'), 10) : null,
               image: img ? img.textContent : null,
-              bestWith: extractBestWith(it)
+              bestWith: extractBestWith(it),
+              rating: rating,
+              weight: weight
             };
           }
         });
@@ -791,6 +880,10 @@
       var patch = {};
       if (d.image && !g.imageUrl) patch.imageUrl = d.image;
       if (d.bestWith && d.bestWith !== g.bestWith) patch.bestWith = d.bestWith;
+      if (d.rating && d.rating !== g.rating) patch.rating = d.rating;
+      if (d.weight && d.weight !== g.weight) patch.weight = d.weight;
+      if (d.minPlayers != null) patch.minPlayers = d.minPlayers;
+      if (d.maxPlayers != null) patch.maxPlayers = d.maxPlayers;
       if (Object.keys(patch).length) updates.push(db.doc('games/' + g.id).update(patch).catch(function () {}));
     });
     return Promise.all(updates);
@@ -811,7 +904,7 @@
           return {
             id: id, title: g.title, owners: g.owners,
             minPlayers: d.minPlayers, maxPlayers: d.maxPlayers,
-            image: d.image, bestWith: d.bestWith
+            image: d.image, bestWith: d.bestWith, rating: d.rating, weight: d.weight
           };
         }).sort(function (a, b) { return a.title.localeCompare(b.title); });
         BGG_GAMES = list;
@@ -857,10 +950,16 @@
   function closeAddSheet() {
     addSheet.hidden = true;
     selectedBggBestWith = '';
+    selectedBggRating = '';
+    selectedBggWeight = '';
+    selectedBggMinPlayers = null;
+    selectedBggMaxPlayers = null;
     editingGameId = null;
     addSheetTitle.textContent = 'Nieuw spel';
     addSubmitBtn.textContent = 'Toevoegen';
     document.getElementById('addForm').reset();
+    uploadPreview.src = '';
+    uploadPreview.classList.remove('show');
   }
 
   function openEditSheet(id) {
@@ -868,6 +967,10 @@
     if (!g) return;
     editingGameId = id;
     selectedBggBestWith = g.bestWith || '';
+    selectedBggRating = g.rating || '';
+    selectedBggWeight = g.weight || '';
+    selectedBggMinPlayers = (typeof g.minPlayers === 'number') ? g.minPlayers : null;
+    selectedBggMaxPlayers = (typeof g.maxPlayers === 'number') ? g.maxPlayers : null;
     addSheetTitle.textContent = 'Spel bewerken';
     addSubmitBtn.textContent = 'Opslaan';
     document.getElementById('f-title').value = g.title || '';
@@ -877,6 +980,8 @@
     document.getElementById('f-rulebook').value = g.rulebookUrl || '';
     document.getElementById('f-image').value = g.imageUrl || '';
     document.getElementById('f-notes').value = g.notes || '';
+    if (g.imageUrl) { uploadPreview.src = g.imageUrl; uploadPreview.classList.add('show'); }
+    else { uploadPreview.src = ''; uploadPreview.classList.remove('show'); }
     addSheet.hidden = false;
   }
 
@@ -885,6 +990,42 @@
   });
   document.getElementById('cancelAdd').addEventListener('click', closeAddSheet);
   addSheet.addEventListener('click', function (e) { if (e.target === addSheet) closeAddSheet(); });
+
+  // --- foto uploaden (client-side verkleind naar data-URL) ---
+  var uploadPhotoBtn = document.getElementById('uploadPhotoBtn');
+  var photoFileInput = document.getElementById('photoFileInput');
+  uploadPhotoBtn.addEventListener('click', function () { photoFileInput.click(); });
+  photoFileInput.addEventListener('change', function () {
+    var file = photoFileInput.files && photoFileInput.files[0];
+    if (!file) return;
+    var reader = new FileReader();
+    reader.onload = function (ev) {
+      var img = new Image();
+      img.onload = function () {
+        var maxDim = 480;
+        var scale = Math.min(1, maxDim / Math.max(img.width, img.height));
+        var w = Math.max(1, Math.round(img.width * scale)), h = Math.max(1, Math.round(img.height * scale));
+        var canvas = document.createElement('canvas');
+        canvas.width = w; canvas.height = h;
+        canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+        var dataUrl = canvas.toDataURL('image/jpeg', 0.72);
+        document.getElementById('f-image').value = dataUrl;
+        uploadPreview.src = dataUrl;
+        uploadPreview.classList.add('show');
+      };
+      img.src = ev.target.result;
+    };
+    reader.readAsDataURL(file);
+    photoFileInput.value = '';
+  });
+
+  // --- zoeken, spelersfilter, archief ---
+  searchInput.addEventListener('input', render);
+  playersFilterEl.addEventListener('change', render);
+  archiveToggleBtn.addEventListener('click', function () {
+    showArchived = !showArchived;
+    render();
+  });
 
   // --- BGG collectie zoeken (Astcfx, Stevebuffalo, Woutervanoverwalle) ---
   var bggSearch = document.getElementById('bggSearch');
@@ -926,8 +1067,12 @@
     if (g.minPlayers && g.maxPlayers) {
       document.getElementById('f-players').value = g.minPlayers === g.maxPlayers ? String(g.minPlayers) : (g.minPlayers + '–' + g.maxPlayers);
     }
-    if (g.image) document.getElementById('f-image').value = g.image;
+    if (g.image) { document.getElementById('f-image').value = g.image; uploadPreview.src = g.image; uploadPreview.classList.add('show'); }
     selectedBggBestWith = g.bestWith || '';
+    selectedBggRating = g.rating || '';
+    selectedBggWeight = g.weight || '';
+    selectedBggMinPlayers = (typeof g.minPlayers === 'number') ? g.minPlayers : null;
+    selectedBggMaxPlayers = (typeof g.maxPlayers === 'number') ? g.maxPlayers : null;
     bggSearch.value = '';
     bggResults.hidden = true;
     bggResults.innerHTML = '';
@@ -949,8 +1094,12 @@
         rulebookUrl: document.getElementById('f-rulebook').value.trim(),
         imageUrl: document.getElementById('f-image').value.trim(),
         bestWith: selectedBggBestWith || '',
+        rating: selectedBggRating || '',
+        weight: selectedBggWeight || '',
         notes: document.getElementById('f-notes').value.trim()
       };
+      if (selectedBggMinPlayers != null) patch.minPlayers = selectedBggMinPlayers;
+      if (selectedBggMaxPlayers != null) patch.maxPlayers = selectedBggMaxPlayers;
       var idToUpdate = editingGameId;
       db.doc('games/' + idToUpdate).update(patch).then(function () {
         closeAddSheet();
@@ -968,12 +1117,17 @@
       rulebookUrl: document.getElementById('f-rulebook').value.trim(),
       imageUrl: document.getElementById('f-image').value.trim(),
       bestWith: selectedBggBestWith || '',
+      rating: selectedBggRating || '',
+      weight: selectedBggWeight || '',
       notes: document.getElementById('f-notes').value.trim(),
       addedBy: myName,
       addedAt: Date.now(),
       order: nextOrderValue(),
-      plannedDate: ''
+      plannedDate: '',
+      archived: false
     };
+    if (selectedBggMinPlayers != null) data.minPlayers = selectedBggMinPlayers;
+    if (selectedBggMaxPlayers != null) data.maxPlayers = selectedBggMaxPlayers;
     db.collection('games').add(data).then(function () {
       closeAddSheet();
     }).catch(function () {
@@ -990,11 +1144,15 @@
       document.getElementById('gamesView').hidden = tab !== 'games';
       document.getElementById('boardView').hidden = tab !== 'board';
       document.getElementById('oathView').hidden = tab !== 'oath';
+      document.getElementById('plannedView').hidden = tab !== 'planned';
       if (tab === 'board') {
         renderLeaderboard();
-        if (!lbLoadedOnce) { lbLoadedOnce = true; refreshAllStats(); }
+        lbLoadedOnce = true;
+        refreshAllStats();
       } else if (tab === 'oath') {
         if (!oathLoadedOnce) { oathLoadedOnce = true; subscribeOath(); }
+      } else if (tab === 'planned') {
+        renderPlanned();
       }
     });
   });
@@ -1006,6 +1164,8 @@
     if (g.players) metaPills += '<span class="pill">' + esc(g.players) + ' spelers</span>';
     if (g.playTime) metaPills += '<span class="pill">' + esc(g.playTime) + '</span>';
     if (g.bestWith) metaPills += '<span class="pill">best met ' + esc(g.bestWith) + '</span>';
+    if (g.rating) metaPills += '<span class="pill">★ ' + esc(g.rating) + '</span>';
+    if (g.weight) metaPills += '<span class="pill">gewicht ' + esc(g.weight) + '</span>';
     var bggBtn = g.bggUrl
       ? '<a class="icon-btn bgg-link" href="' + esc(g.bggUrl) + '" target="_blank" rel="noopener" aria-label="BGG-pagina">' + ICON_DICE + '</a>'
       : '';
@@ -1034,18 +1194,20 @@
       : '<div class="planned-row"><button type="button" class="plan-btn" data-id="' + g.id + '" data-cur="">+ speeldatum plannen</button></div>';
 
     return (
-      '<article class="card" data-id="' + g.id + '">' +
+      '<article class="card' + (g.archived ? ' archived' : '') + '" data-id="' + g.id + '">' +
         '<div class="card-top">' +
           '<div class="card-top-media">' +
             rankBtns +
             thumbHtml +
             '<div class="card-title-wrap">' +
               '<h3 class="card-title">' + esc(g.title) + '</h3>' +
+              (g.archived ? '<span class="archived-label">gearchiveerd</span>' : '') +
               addedByHtml +
             '</div>' +
           '</div>' +
           '<div class="card-top-actions">' + bggBtn + rulebookBtn +
             '<button class="icon-btn edit-btn" data-id="' + g.id + '" aria-label="Bewerken">' + ICON_EDIT + '</button>' +
+            '<button class="icon-btn archive-btn" data-id="' + g.id + '" data-archived="' + (g.archived ? '1' : '') + '" aria-label="' + (g.archived ? 'Herstellen' : 'Archiveren') + '">' + (g.archived ? ICON_UNARCHIVE : ICON_ARCHIVE) + '</button>' +
             '<button class="icon-btn delete-btn" data-id="' + g.id + '" aria-label="Verwijderen">' + ICON_TRASH + '</button>' +
           '</div>' +
         '</div>' +
@@ -1092,16 +1254,60 @@
     });
   }
 
+  function playersRange(g) {
+    if (typeof g.minPlayers === 'number' && typeof g.maxPlayers === 'number') return [g.minPlayers, g.maxPlayers];
+    var nums = (g.players || '').match(/\d+/g);
+    if (!nums) return null;
+    return [parseInt(nums[0], 10), parseInt(nums[nums.length - 1], 10)];
+  }
+
+  function matchesPlayersFilter(g, val) {
+    if (!val) return true;
+    var range = playersRange(g);
+    if (!range) return false;
+    if (val === '5') return range[1] >= 5;
+    var n = parseInt(val, 10);
+    return range[0] <= n && range[1] >= n;
+  }
+
+  function archivedCount() {
+    return games.filter(function (g) { return g.archived; }).length;
+  }
+
   function render() {
-    surpriseBtn.hidden = !games.length;
+    var nonArchived = games.filter(function (g) { return !g.archived; });
+    surpriseBtn.hidden = !nonArchived.length;
+    var ac = archivedCount();
+    archiveToggleBtn.textContent = showArchived
+      ? 'Verberg gearchiveerde spellen'
+      : 'Toon gearchiveerde spellen' + (ac ? ' (' + ac + ')' : '');
+    archiveToggleBtn.hidden = !ac && !showArchived;
     if (!games.length) {
       statusLine.hidden = true;
       gameList.innerHTML = '<div class="empty-state">' + ICON_EMPTY + '<div>Nog geen spellen op de plank.<br>Voeg het eerste toe met de <strong>+</strong> knop.</div></div>';
+      renderPlanned();
       return;
     }
     statusLine.hidden = true;
-    var sorted = sortedGames();
-    gameList.innerHTML = sorted.map(function (g, i) { return gameCardHTML(g, i, sorted.length); }).join('');
+    var fullSorted = sortedGames();
+    var idxMap = {};
+    fullSorted.forEach(function (g, i) { idxMap[g.id] = i; });
+    var query = (searchInput.value || '').trim().toLowerCase();
+    var playersVal = playersFilterEl.value;
+    var visibleBase = showArchived ? games : nonArchived;
+    var list = visibleBase.filter(function (g) {
+      if (query) {
+        var hay = (g.title + ' ' + (g.addedBy || '')).toLowerCase();
+        if (hay.indexOf(query) === -1) return false;
+      }
+      return matchesPlayersFilter(g, playersVal);
+    }).sort(function (a, b) { return idxMap[a.id] - idxMap[b.id]; });
+    if (!list.length) {
+      gameList.innerHTML = '<p class="no-results">Geen spellen gevonden.</p>';
+    } else {
+      gameList.innerHTML = list.map(function (g) { return gameCardHTML(g, idxMap[g.id], fullSorted.length); }).join('');
+    }
+    renderPlanned();
   }
 
   function moveRank(id, dir) {
@@ -1261,6 +1467,11 @@
       openEditSheet(editBtn.dataset.id);
       return;
     }
+    var archiveBtnEl = e.target.closest('.archive-btn');
+    if (archiveBtnEl) {
+      archiveGame(archiveBtnEl.dataset.id, archiveBtnEl.dataset.archived !== '1');
+      return;
+    }
     var rankBtn = e.target.closest('.rank-btn');
     if (rankBtn) {
       if (rankBtn.disabled) return;
@@ -1296,8 +1507,9 @@
   var WHEEL_COLORS = ['#2f6b4f', '#3f8362', '#c9a13b', '#8a5a2b', '#4a7a8c', '#6a4a8c', '#b0532f', '#3f6b8c'];
 
   function wheelPool() {
-    if (!wheelUnplayedOnly.checked) return games;
-    return games.filter(function (g) { var st = statsMap[g.id]; return !st || !st.playCount; });
+    var pool = games.filter(function (g) { return !g.archived; });
+    if (!wheelUnplayedOnly.checked) return pool;
+    return pool.filter(function (g) { var st = statsMap[g.id]; return !st || !st.playCount; });
   }
 
   function buildWheelDisc(pool) {
@@ -1455,6 +1667,29 @@
     }).catch(function () {
       alert('Kon spel niet verwijderen.');
     });
+  }
+
+  function archiveGame(id, archived) {
+    if (!db) return;
+    var g = games.find(function (x) { return x.id === id; });
+    if (g) { g.archived = archived; render(); }
+    db.doc('games/' + id).update({ archived: archived }).catch(function () {
+      alert('Kon niet ' + (archived ? 'archiveren' : 'herstellen') + '. Probeer opnieuw.');
+    });
+  }
+
+  function renderPlanned() {
+    var listEl = document.getElementById('plannedList');
+    if (!listEl) return;
+    var withDates = games.filter(function (g) { return g.plannedDate && !g.archived; })
+      .sort(function (a, b) { return (a.plannedDate || '').localeCompare(b.plannedDate || ''); });
+    if (!withDates.length) {
+      listEl.innerHTML = '<p class="no-plays">Nog geen speeldata gepland. Plan er een via een spelkaart bij "Spellen".</p>';
+      return;
+    }
+    listEl.innerHTML = withDates.map(function (g) {
+      return '<div class="planned-card"><span class="planned-date-big">' + esc(formatDate(g.plannedDate)) + '</span><span class="planned-title">' + esc(g.title) + '</span></div>';
+    }).join('');
   }
 
   function subscribeGames() {
