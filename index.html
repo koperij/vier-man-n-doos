@@ -553,13 +553,14 @@
   .no-results { font-size: 0.85rem; color: var(--ink-faint); text-align: center; padding: 1.5rem 0.5rem; }
 
   /* Photo upload */
-  .upload-row { display: flex; align-items: center; gap: 0.6rem; margin-top: 0.4rem; }
+  .upload-row { display: flex; align-items: center; flex-wrap: wrap; gap: 0.5rem; margin-top: 0.4rem; }
   .upload-btn {
     border: 1px dashed var(--border); background: var(--surface-2); color: var(--ink-dim);
     font: inherit; font-size: 0.78rem; font-weight: 600; padding: 0.4rem 0.7rem; border-radius: 10px; cursor: pointer;
   }
   .upload-preview { width: 40px; height: 40px; border-radius: 8px; object-fit: cover; border: 1px solid var(--border); display: none; }
   .upload-preview.show { display: block; }
+  .paste-status { font-size: 0.74rem; color: var(--accent); margin-top: 0.35rem; min-height: 1em; }
   .photo-suggest-row { margin-top: 0.5rem; }
   .photo-suggest-link { color: var(--accent); font-size: 0.76rem; text-decoration: underline; display: inline-block; }
   .photo-suggest-hint { display: block; font-size: 0.68rem; color: var(--ink-faint); margin-top: 0.25rem; line-height: 1.6; }
@@ -674,13 +675,15 @@
       <label class="field"><span>Link naar rulebook (PDF)</span><input id="f-rulebook" type="url" placeholder="https://…" /></label>
       <label class="field"><span>Afbeelding URL (optioneel)</span><input id="f-image" type="text" placeholder="https://…" /></label>
       <div class="upload-row">
-        <button type="button" id="uploadPhotoBtn" class="upload-btn">Of upload een foto…</button>
+        <button type="button" id="uploadPhotoBtn" class="upload-btn">Upload een foto…</button>
+        <button type="button" id="pastePhotoBtn" class="upload-btn">📋 Plak foto</button>
         <input type="file" id="photoFileInput" accept="image/*" style="display:none;" />
         <img id="uploadPreview" class="upload-preview" alt="" />
       </div>
+      <div id="pasteStatus" class="paste-status"></div>
       <div class="photo-suggest-row">
         <a href="#" target="_blank" rel="noopener" id="photoSuggestLink" class="photo-suggest-link">🔍 Zoek foto's voor "<span id="photoSuggestTitle">dit spel</span>"</a>
-        <span class="photo-suggest-hint">opent een beeldzoekopdracht — sleep de foto die je wil op je toestel op en upload 'm hierboven</span>
+        <span class="photo-suggest-hint">klik rechts op de gewenste foto → "Afbeelding kopiëren", kom terug en druk op 📋 Plak foto (of Ctrl+V)</span>
       </div>
       <label class="field"><span>Notitie (optioneel)</span><textarea id="f-notes" placeholder="Waarom willen we dit spelen?"></textarea></label>
       <div class="sheet-actions">
@@ -1117,13 +1120,21 @@
   document.getElementById('cancelAdd').addEventListener('click', closeAddSheet);
   addSheet.addEventListener('click', function (e) { if (e.target === addSheet) closeAddSheet(); });
 
-  // --- foto uploaden (client-side verkleind naar data-URL) ---
+  // --- foto uploaden / plakken (client-side verkleind naar data-URL) ---
   var uploadPhotoBtn = document.getElementById('uploadPhotoBtn');
   var photoFileInput = document.getElementById('photoFileInput');
-  uploadPhotoBtn.addEventListener('click', function () { photoFileInput.click(); });
-  photoFileInput.addEventListener('change', function () {
-    var file = photoFileInput.files && photoFileInput.files[0];
-    if (!file) return;
+  var pastePhotoBtn = document.getElementById('pastePhotoBtn');
+  var pasteStatus = document.getElementById('pasteStatus');
+  var pasteStatusTimer = null;
+
+  function setPasteStatus(msg) {
+    pasteStatus.textContent = msg;
+    if (pasteStatusTimer) clearTimeout(pasteStatusTimer);
+    if (msg) pasteStatusTimer = setTimeout(function () { pasteStatus.textContent = ''; }, 3200);
+  }
+
+  function handleImageBlob(blob) {
+    if (!blob) return;
     var reader = new FileReader();
     reader.onload = function (ev) {
       var img = new Image();
@@ -1138,12 +1149,61 @@
         document.getElementById('f-image').value = dataUrl;
         uploadPreview.src = dataUrl;
         uploadPreview.classList.add('show');
+        setPasteStatus('✅ Foto toegevoegd!');
       };
+      img.onerror = function () { setPasteStatus('Kon deze afbeelding niet lezen.'); };
       img.src = ev.target.result;
     };
-    reader.readAsDataURL(file);
+    reader.readAsDataURL(blob);
+  }
+
+  uploadPhotoBtn.addEventListener('click', function () { photoFileInput.click(); });
+  photoFileInput.addEventListener('change', function () {
+    var file = photoFileInput.files && photoFileInput.files[0];
+    if (file) handleImageBlob(file);
     photoFileInput.value = '';
   });
+
+  function clipboardItemsToImage(items) {
+    if (!items) return false;
+    for (var i = 0; i < items.length; i++) {
+      var it = items[i];
+      if (it && it.type && it.type.indexOf('image/') === 0 && it.getAsFile) {
+        var blob = it.getAsFile();
+        if (blob) { handleImageBlob(blob); return true; }
+      }
+    }
+    return false;
+  }
+
+  // Ctrl+V (of lang-aanhouden-plakken op mobiel) ergens in het formulier werkt meteen.
+  document.getElementById('addSheet').addEventListener('paste', function (e) {
+    var items = e.clipboardData && e.clipboardData.items;
+    if (clipboardItemsToImage(items)) e.preventDefault();
+  });
+
+  // Losse knop: handig wanneer de gebruiker niet eerst in een tekstveld moet klikken,
+  // en op desktop-Chrome/Edge waar de Clipboard API rechtstreeks een afbeelding kan uitlezen.
+  if (pastePhotoBtn) {
+    pastePhotoBtn.addEventListener('click', function () {
+      if (!navigator.clipboard || !navigator.clipboard.read) {
+        setPasteStatus('Plakken via de knop wordt hier niet ondersteund — kopieer een foto en druk Ctrl+V.');
+        return;
+      }
+      navigator.clipboard.read().then(function (clipItems) {
+        for (var i = 0; i < clipItems.length; i++) {
+          var types = clipItems[i].types.filter(function (t) { return t.indexOf('image/') === 0; });
+          if (types.length) {
+            clipItems[i].getType(types[0]).then(handleImageBlob);
+            return;
+          }
+        }
+        setPasteStatus('Geen foto gevonden op je klembord — kopieer er eerst één.');
+      }).catch(function () {
+        setPasteStatus('Kon klembord niet lezen — kopieer een foto en druk Ctrl+V.');
+      });
+    });
+  }
 
   // --- zoeken, spelersfilter, archief ---
   searchInput.addEventListener('input', render);
@@ -1663,19 +1723,22 @@
     wheelDisc.style.background = 'conic-gradient(' + stops + ')';
     wheelDisc.style.transform = 'rotate(0deg)';
     wheelDisc.dataset.rotation = '0';
-    // discRadius matches .wheel-disc's own radius (260px / 2); labelRadius keeps text
-    // away from the center hub and inside the outer rim so it stays inside its slice.
+    // discRadius matches .wheel-disc's own radius (260px / 2). Labels run lengthwise
+    // along the spoke — like a classic wheel-of-fortune — starting just past the
+    // center hub and reaching almost to the rim, instead of sitting sideways.
     var discRadius = 130;
-    var labelRadius = discRadius - 40;
-    var fontSize = n <= 5 ? 0.62 : n <= 8 ? 0.54 : n <= 12 ? 0.46 : n <= 18 ? 0.4 : 0.34;
-    // chord width available at labelRadius for one slice, with a safety margin so
-    // neighbouring labels never overlap even at the widest point of the slice.
-    var chordWidth = Math.max(30, 2 * labelRadius * Math.sin((slice / 2) * Math.PI / 180) * 0.82);
+    var hubRadius = 26;
+    var rimPad = 14;
+    var runLength = discRadius - hubRadius - rimPad;
+    // font size is capped by how much tangential room the slice has right next to the
+    // hub (the tightest point along the run), so labels never spill into a neighbour.
+    var rootPx = 14.5;
+    var fontSize = Math.max(0.32, Math.min(0.62, (2 * hubRadius * Math.sin((slice / 2) * Math.PI / 180) * 0.9) / rootPx));
     var iconsHtml = pool.map(function (g, i) {
       var mid = i * slice + slice / 2;
       var label = esc(g.title);
-      var style = 'transform: rotate(' + mid + 'deg) translate(0, -' + labelRadius + 'px) rotate(' + (-mid) + 'deg);' +
-        ' font-size: ' + fontSize + 'rem; width: ' + chordWidth.toFixed(0) + 'px; margin-left: -' + (chordWidth / 2).toFixed(0) + 'px; margin-top: -0.65em;';
+      var style = 'transform: rotate(' + mid + 'deg) translate(0, -' + hubRadius + 'px) rotate(-90deg);' +
+        ' font-size: ' + fontSize.toFixed(3) + 'rem; width: ' + runLength + 'px; margin-top: -0.6em;';
       return '<span class="wheel-icon" style="' + style + '" title="' + label + '">' + label + '</span>';
     }).join('');
     wheelDisc.innerHTML = '<div class="wheel-center"></div>' + iconsHtml;
