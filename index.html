@@ -1432,8 +1432,12 @@
     var list = visibleBase.filter(function (g) {
       if (query) {
         var titleLower = (g.title || '').toLowerCase();
-        var titleWords = titleLower.split(/\s+/);
-        var titleMatches = titleWords.some(function (w) { return w.indexOf(query) === 0; });
+        var titleWords = titleLower.split(/\s+/).filter(Boolean);
+        // match if the query is a prefix of the title starting at any word boundary,
+        // so both a single word ("bligh...") and a multi-word phrase ("blighted reach...") work
+        var titleMatches = titleWords.some(function (w, i) {
+          return titleWords.slice(i).join(' ').indexOf(query) === 0;
+        });
         var addedByMatches = (g.addedBy || '').toLowerCase().indexOf(query) === 0;
         if (!titleMatches && !addedByMatches) return false;
       }
