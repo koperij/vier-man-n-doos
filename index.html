@@ -1,3 +1,12 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#1C7C74">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <title>Vier Man, Eén Doos</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -58,11 +67,15 @@
   }
 
   * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
   body {
     background: var(--bg);
     color: var(--ink);
     font-family: 'Inter', system-ui, sans-serif;
+    -webkit-tap-highlight-color: transparent;
+    overscroll-behavior-y: contain;
   }
+  button { touch-action: manipulation; }
   @media (prefers-reduced-motion: reduce) {
     *, *::before, *::after { transition: none !important; animation: none !important; }
   }
@@ -150,7 +163,8 @@
   .added-by { font-size: 0.74rem; color: var(--ink-faint); margin-top: 0.15rem; }
   .card-top-actions { display: flex; align-items: center; gap: 0.15rem; flex: none; margin-top: 0.1rem; }
   .rank-btns { display: flex; flex-direction: column; margin-right: 0.1rem; }
-  .rank-btn { border: none; background: transparent; color: var(--ink-faint); width: 1.3rem; height: 1rem; display: flex; align-items: center; justify-content: center; cursor: pointer; padding: 0; }
+  .rank-btn { border: none; background: transparent; color: var(--ink-faint); width: 1.9rem; height: 1.5rem; display: flex; align-items: center; justify-content: center; cursor: pointer; padding: 0; touch-action: manipulation; }
+  .rank-btn:disabled { opacity: 0.3; cursor: default; }
   .rank-btn:hover { color: var(--ink); }
   .rank-btn svg { width: 12px; height: 12px; }
   .icon-btn {
@@ -392,7 +406,41 @@
   }
   .surprise-btn svg { width: 17px; height: 17px; }
   .surprise-btn:active { transform: scale(0.98); }
+
+  /* BGG live refresh */
+  .bgg-refresh-row { display: flex; align-items: center; gap: 0.5rem; margin-top: 0.5rem; }
+  .bgg-refresh-btn {
+    display: flex; align-items: center; gap: 0.3rem;
+    border: 1px solid var(--border); background: var(--surface-2); color: var(--ink);
+    font: inherit; font-size: 0.78rem; font-weight: 600;
+    padding: 0.35rem 0.6rem; border-radius: 999px; cursor: pointer;
+  }
+  .bgg-refresh-btn svg { width: 13px; height: 13px; }
+  .bgg-refresh-btn:disabled { opacity: 0.6; cursor: default; }
+  .bgg-refresh-btn.spinning svg { animation: bgg-spin 1s linear infinite; }
+  @keyframes bgg-spin { to { transform: rotate(360deg); } }
+  .bgg-refresh-status { font-size: 0.74rem; color: var(--ink-faint); }
+
+  /* Oath */
+  .oath-intro { margin-bottom: 0.9rem; }
+  .oath-intro h2 { margin: 0 0 0.2rem; font-size: 1.3rem; }
+  .oath-sub { font-size: 0.85rem; color: var(--ink-dim); margin: 0; }
+  .oath-form {
+    background: var(--surface); border: 1px solid var(--border); border-radius: 16px;
+    padding: 0.9rem; margin-bottom: 1.1rem;
+  }
+  .oath-tally { display: flex; flex-direction: column; gap: 0.6rem; margin-bottom: 1.1rem; }
+  .oath-tally-group h4 { margin: 0 0 0.35rem; font-size: 0.8rem; color: var(--ink-dim); font-weight: 600; }
+  .oath-history { display: flex; flex-direction: column; gap: 0.6rem; }
+  .oath-row {
+    display: flex; gap: 0.7rem; background: var(--surface); border: 1px solid var(--border);
+    border-radius: 12px; padding: 0.6rem 0.75rem;
+  }
+  .oath-row-date { font-size: 0.78rem; color: var(--ink-faint); flex: none; width: 4.6rem; }
+  .oath-row-body { font-size: 0.88rem; }
 </style>
+</head>
+<body>
 
 <div id="app">
   <header class="topbar">
@@ -406,6 +454,7 @@
     <div class="tabs" role="tablist">
       <button class="tab active" data-tab="games" role="tab" aria-selected="true">Spellen</button>
       <button class="tab" data-tab="board" role="tab" aria-selected="false">Topscore</button>
+      <button class="tab" data-tab="oath" role="tab" aria-selected="false">Oath</button>
     </div>
   </header>
 
@@ -422,6 +471,26 @@
     <p id="lbStatus" class="play-stat" style="margin-bottom:0.8rem;">Bezig met tellen…</p>
     <div id="leaderboard" class="lb-list"></div>
   </main>
+
+  <main id="oathView" hidden>
+    <div class="oath-intro">
+      <h2>Oath</h2>
+      <p class="oath-sub">Jullie founding game — hou per potje bij wie Chancellor was en wie won.</p>
+    </div>
+    <form id="oathForm" class="oath-form">
+      <div class="play-form-row">
+        <label><span class="field-label">Datum</span><input type="date" id="oath-date" /></label>
+        <label><span class="field-label">Chancellor</span><input id="oath-chancellor" placeholder="naam" /></label>
+      </div>
+      <div class="play-form-row">
+        <label><span class="field-label">Winnaar</span><input id="oath-winner" placeholder="naam" required /></label>
+        <label><span class="field-label">Notitie</span><input id="oath-note" placeholder="optioneel" /></label>
+      </div>
+      <button type="submit" class="btn btn-primary">Oath-potje loggen</button>
+    </form>
+    <div id="oathTally" class="oath-tally"></div>
+    <div id="oathHistory" class="oath-history"><p class="no-plays">Bezig met laden…</p></div>
+  </main>
 </div>
 
 <div id="addSheet" class="sheet" hidden>
@@ -432,6 +501,13 @@
       <input id="bggSearch" autocomplete="off" placeholder="typ een titel…" />
       <div id="bggResults" class="bgg-results" hidden></div>
       <span class="bgg-hint">Doorzoekt de collecties van Astcfx, Stevebuffalo, Woutervanoverwalle en Robin · vult titel, spelers en BGG-pagina in</span>
+      <div class="bgg-refresh-row">
+        <button type="button" id="bggRefreshBtn" class="bgg-refresh-btn">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 12a8 8 0 1 1-2.34-5.66M20 4v5h-5"/></svg>
+          Ververs vanuit BGG
+        </button>
+        <span id="bggRefreshStatus" class="bgg-refresh-status"></span>
+      </div>
     </div>
     <form id="addForm">
       <label class="field"><span>Titel</span><input id="f-title" required placeholder="bv. Wingspan" /></label>
@@ -564,6 +640,192 @@
   var wheelUnplayedOnly = document.getElementById('wheelUnplayedOnly');
   var wheelSpinning = false;
   var lbLoadedOnce = false;
+  var oathLoadedOnce = false;
+  var oathEntries = [];
+  var bggRefreshBtn = document.getElementById('bggRefreshBtn');
+  var bggRefreshStatus = document.getElementById('bggRefreshStatus');
+  var selectedBggBestWith = '';
+
+  // --- BGG live refresh ---
+  var BGG_USERNAMES = ['Astcfx', 'Stevebuffalo', 'Woutervanoverwalle', 'Robin'];
+  var CORS_PROXY = 'https://api.allorigins.win/raw?url=';
+  var BGG_CACHE_KEY = 'vmed-bgg-cache-v1';
+
+  function loadBggCache() {
+    try {
+      var raw = localStorage.getItem(BGG_CACHE_KEY);
+      if (!raw) return null;
+      return JSON.parse(raw);
+    } catch (e) { return null; }
+  }
+
+  function saveBggCache(list) {
+    try { localStorage.setItem(BGG_CACHE_KEY, JSON.stringify({ at: Date.now(), games: list })); } catch (e) { /* geen localStorage beschikbaar */ }
+  }
+
+  function relativeTimeAgo(ts) {
+    var mins = Math.round((Date.now() - ts) / 60000);
+    if (mins < 1) return 'zonet';
+    if (mins < 60) return mins + ' min geleden';
+    var hrs = Math.round(mins / 60);
+    if (hrs < 24) return hrs + ' uur geleden';
+    return Math.round(hrs / 24) + ' dagen geleden';
+  }
+
+  (function initBggCache() {
+    var cached = loadBggCache();
+    if (cached && cached.games && cached.games.length) {
+      BGG_GAMES = cached.games;
+      bggRefreshStatus.textContent = 'Laatst bijgewerkt ' + relativeTimeAgo(cached.at);
+    } else {
+      bggRefreshStatus.textContent = 'Nog niet ververst (gebruikt de meegeleverde lijst)';
+    }
+  })();
+
+  function bggProxyFetch(url) {
+    return fetch(CORS_PROXY + encodeURIComponent(url)).then(function (r) {
+      if (!r.ok) throw new Error('BGG-proxy gaf status ' + r.status);
+      return r.text();
+    });
+  }
+
+  function fetchCollectionXmlWithRetry(username, triesLeft) {
+    triesLeft = (triesLeft == null) ? 6 : triesLeft;
+    var url = 'https://boardgamegeek.com/xmlapi2/collection?username=' + encodeURIComponent(username) + '&own=1&excludesubtype=boardgameexpansion';
+    return bggProxyFetch(url).then(function (xmlText) {
+      var looksQueued = !xmlText || /message.*queued|processing/i.test(xmlText) || xmlText.indexOf('<items') === -1;
+      if (looksQueued) {
+        if (triesLeft <= 0) throw new Error('BGG bleef "in de wachtrij" voor ' + username);
+        return new Promise(function (res) { setTimeout(res, 2500); }).then(function () {
+          return fetchCollectionXmlWithRetry(username, triesLeft - 1);
+        });
+      }
+      return xmlText;
+    });
+  }
+
+  function parseCollectionXml(xmlText, username, map) {
+    var doc = new DOMParser().parseFromString(xmlText, 'text/xml');
+    var items = doc.getElementsByTagName('item');
+    for (var i = 0; i < items.length; i++) {
+      var it = items[i];
+      var id = it.getAttribute('objectid');
+      var nameEl = it.getElementsByTagName('name')[0];
+      var title = nameEl ? nameEl.textContent : null;
+      if (!id || !title) continue;
+      if (!map[id]) map[id] = { id: id, title: title, owners: [] };
+      if (map[id].owners.indexOf(username) === -1) map[id].owners.push(username);
+    }
+  }
+
+  function fetchAllCollectionsLive() {
+    var map = {};
+    var seq = BGG_USERNAMES.reduce(function (p, uname) {
+      return p.then(function () {
+        return fetchCollectionXmlWithRetry(uname).then(function (xml) { parseCollectionXml(xml, uname, map); });
+      });
+    }, Promise.resolve());
+    return seq.then(function () { return map; });
+  }
+
+  function extractBestWith(itemEl) {
+    var polls = itemEl.getElementsByTagName('poll');
+    for (var i = 0; i < polls.length; i++) {
+      if (polls[i].getAttribute('name') === 'suggested_numplayers') {
+        var results = polls[i].getElementsByTagName('results');
+        var best = null, bestVotes = 0;
+        for (var j = 0; j < results.length; j++) {
+          var numplayers = results[j].getAttribute('numplayers');
+          var resultEls = results[j].getElementsByTagName('result');
+          var votes = 0;
+          for (var k = 0; k < resultEls.length; k++) {
+            if (resultEls[k].getAttribute('value') === 'Best') votes = parseInt(resultEls[k].getAttribute('numvotes'), 10) || 0;
+          }
+          if (votes > bestVotes) { bestVotes = votes; best = numplayers; }
+        }
+        return best;
+      }
+    }
+    return null;
+  }
+
+  function fetchThingDetailsLive(ids) {
+    var chunks = [];
+    for (var i = 0; i < ids.length; i += 20) chunks.push(ids.slice(i, i + 20));
+    var detailMap = {};
+    return chunks.reduce(function (p, chunk) {
+      return p.then(function () {
+        var url = 'https://boardgamegeek.com/xmlapi2/thing?id=' + chunk.join(',') + '&stats=1';
+        return bggProxyFetch(url).then(function (xmlText) {
+          var doc = new DOMParser().parseFromString(xmlText, 'text/xml');
+          var items = doc.getElementsByTagName('item');
+          for (var i2 = 0; i2 < items.length; i2++) {
+            var it = items[i2];
+            var id = it.getAttribute('id');
+            var minP = it.getElementsByTagName('minplayers')[0];
+            var maxP = it.getElementsByTagName('maxplayers')[0];
+            var img = it.getElementsByTagName('image')[0];
+            detailMap[id] = {
+              minPlayers: minP ? parseInt(minP.getAttribute('value'), 10) : null,
+              maxPlayers: maxP ? parseInt(maxP.getAttribute('value'), 10) : null,
+              image: img ? img.textContent : null,
+              bestWith: extractBestWith(it)
+            };
+          }
+        });
+      });
+    }, Promise.resolve()).then(function () { return detailMap; });
+  }
+
+  function syncAddedGamesWithBgg(byId) {
+    if (!db) return Promise.resolve();
+    var updates = [];
+    games.forEach(function (g) {
+      var m = (g.bggUrl || '').match(/boardgame\/(\d+)/);
+      if (!m) return;
+      var d = byId[m[1]];
+      if (!d) return;
+      var patch = {};
+      if (d.image && !g.imageUrl) patch.imageUrl = d.image;
+      if (d.bestWith && d.bestWith !== g.bestWith) patch.bestWith = d.bestWith;
+      if (Object.keys(patch).length) updates.push(db.doc('games/' + g.id).update(patch).catch(function () {}));
+    });
+    return Promise.all(updates);
+  }
+
+  function refreshBggLive() {
+    if (bggRefreshBtn.disabled) return;
+    bggRefreshBtn.disabled = true;
+    bggRefreshBtn.classList.add('spinning');
+    bggRefreshStatus.textContent = 'Collecties ophalen bij BGG…';
+    fetchAllCollectionsLive().then(function (map) {
+      var ids = Object.keys(map);
+      if (!ids.length) throw new Error('Geen spellen gevonden in de collecties.');
+      bggRefreshStatus.textContent = ids.length + ' spellen gevonden · spelersaantallen ophalen…';
+      return fetchThingDetailsLive(ids).then(function (details) {
+        var list = ids.map(function (id) {
+          var g = map[id], d = details[id] || {};
+          return {
+            id: id, title: g.title, owners: g.owners,
+            minPlayers: d.minPlayers, maxPlayers: d.maxPlayers,
+            image: d.image, bestWith: d.bestWith
+          };
+        }).sort(function (a, b) { return a.title.localeCompare(b.title); });
+        BGG_GAMES = list;
+        saveBggCache(list);
+        return syncAddedGamesWithBgg(details);
+      });
+    }).then(function () {
+      bggRefreshStatus.textContent = 'Bijgewerkt · zonet';
+    }).catch(function (err) {
+      bggRefreshStatus.textContent = 'Kon BGG niet verversen (probeer straks opnieuw).';
+    }).finally(function () {
+      bggRefreshBtn.disabled = false;
+      bggRefreshBtn.classList.remove('spinning');
+    });
+  }
+
+  bggRefreshBtn.addEventListener('click', refreshBggLive);
 
   function ensureName(cb) {
     if (myName && myName.trim()) { cb(); return; }
@@ -588,8 +850,8 @@
   document.getElementById('addBtn').addEventListener('click', function () {
     ensureName(function () { addSheet.hidden = false; });
   });
-  document.getElementById('cancelAdd').addEventListener('click', function () { addSheet.hidden = true; });
-  addSheet.addEventListener('click', function (e) { if (e.target === addSheet) addSheet.hidden = true; });
+  document.getElementById('cancelAdd').addEventListener('click', function () { addSheet.hidden = true; selectedBggBestWith = ''; });
+  addSheet.addEventListener('click', function (e) { if (e.target === addSheet) { addSheet.hidden = true; selectedBggBestWith = ''; } });
 
   // --- BGG collectie zoeken (Astcfx, Stevebuffalo, Woutervanoverwalle) ---
   var bggSearch = document.getElementById('bggSearch');
@@ -631,6 +893,8 @@
     if (g.minPlayers && g.maxPlayers) {
       document.getElementById('f-players').value = g.minPlayers === g.maxPlayers ? String(g.minPlayers) : (g.minPlayers + '–' + g.maxPlayers);
     }
+    if (g.image) document.getElementById('f-image').value = g.image;
+    selectedBggBestWith = g.bestWith || '';
     bggSearch.value = '';
     bggResults.hidden = true;
     bggResults.innerHTML = '';
@@ -649,12 +913,14 @@
       bggUrl: document.getElementById('f-bgg').value.trim(),
       rulebookUrl: document.getElementById('f-rulebook').value.trim(),
       imageUrl: document.getElementById('f-image').value.trim(),
+      bestWith: selectedBggBestWith || '',
       notes: document.getElementById('f-notes').value.trim(),
       addedBy: myName,
       addedAt: Date.now(),
       order: nextOrderValue(),
       plannedDate: ''
     };
+    selectedBggBestWith = '';
     db.collection('games').add(data).then(function () {
       document.getElementById('addForm').reset();
       addSheet.hidden = true;
@@ -668,12 +934,15 @@
     btn.addEventListener('click', function () {
       document.querySelectorAll('.tab').forEach(function (b) { b.classList.remove('active'); b.setAttribute('aria-selected', 'false'); });
       btn.classList.add('active'); btn.setAttribute('aria-selected', 'true');
-      var isGames = btn.dataset.tab === 'games';
-      document.getElementById('gamesView').hidden = !isGames;
-      document.getElementById('boardView').hidden = isGames;
-      if (!isGames) {
+      var tab = btn.dataset.tab;
+      document.getElementById('gamesView').hidden = tab !== 'games';
+      document.getElementById('boardView').hidden = tab !== 'board';
+      document.getElementById('oathView').hidden = tab !== 'oath';
+      if (tab === 'board') {
         renderLeaderboard();
         if (!lbLoadedOnce) { lbLoadedOnce = true; refreshAllStats(); }
+      } else if (tab === 'oath') {
+        if (!oathLoadedOnce) { oathLoadedOnce = true; subscribeOath(); }
       }
     });
   });
@@ -840,6 +1109,81 @@
       );
     }).join('');
   }
+
+  // --- Oath ---
+  function subscribeOath() {
+    db.collection('oathGames').orderBy('date', 'desc').limit(200).onSnapshot(function (snap) {
+      oathEntries = snap.docs.map(function (d) { return Object.assign({ id: d.id }, d.data()); });
+      renderOath();
+    }, function () {
+      document.getElementById('oathHistory').innerHTML = '<p class="no-plays">Kon Oath-potjes niet laden.</p>';
+    });
+  }
+
+  function tallyGroup(label, counts) {
+    var arr = Object.keys(counts).map(function (k) { return counts[k]; }).sort(function (a, b) { return b.count - a.count; });
+    if (!arr.length) return '';
+    return '<div class="oath-tally-group"><h4>' + label + '</h4><div class="win-chips">' + arr.map(function (r) {
+      return '<span class="win-chip">' + esc(r.name) + ' · ' + r.count + '</span>';
+    }).join('') + '</div></div>';
+  }
+
+  function renderOath() {
+    var tallyEl = document.getElementById('oathTally');
+    var histEl = document.getElementById('oathHistory');
+    if (!oathEntries.length) {
+      tallyEl.innerHTML = '';
+      histEl.innerHTML = '<p class="no-plays">Nog geen Oath-potjes gelogd.</p>';
+      return;
+    }
+    var chancellorCounts = {}, winCounts = {};
+    oathEntries.forEach(function (en) {
+      (en.chancellor || '').split(',').map(function (s) { return s.trim(); }).filter(Boolean).forEach(function (n) {
+        var k = n.toLowerCase();
+        if (!chancellorCounts[k]) chancellorCounts[k] = { name: n, count: 0 };
+        chancellorCounts[k].count++;
+      });
+      (en.winner || '').split(',').map(function (s) { return s.trim(); }).filter(Boolean).forEach(function (n) {
+        var k = n.toLowerCase();
+        if (!winCounts[k]) winCounts[k] = { name: n, count: 0 };
+        winCounts[k].count++;
+      });
+    });
+    tallyEl.innerHTML = tallyGroup('Vaakst Chancellor', chancellorCounts) + tallyGroup('Vaakst gewonnen', winCounts);
+    histEl.innerHTML = oathEntries.map(function (en) {
+      return (
+        '<div class="oath-row">' +
+          '<div class="oath-row-date">' + esc(formatDate(en.date)) + '</div>' +
+          '<div class="oath-row-body">' +
+            '<strong>' + esc(en.winner || '?') + '</strong> won' +
+            (en.chancellor ? ' · Chancellor: ' + esc(en.chancellor) : '') +
+            (en.note ? '<div class="notes">' + esc(en.note) + '</div>' : '') +
+          '</div>' +
+        '</div>'
+      );
+    }).join('');
+  }
+
+  document.getElementById('oath-date').value = todayStr();
+  document.getElementById('oathForm').addEventListener('submit', function (e) {
+    e.preventDefault();
+    var winner = document.getElementById('oath-winner').value.trim();
+    if (!winner) return;
+    var date = document.getElementById('oath-date').value || todayStr();
+    var chancellor = document.getElementById('oath-chancellor').value.trim();
+    var note = document.getElementById('oath-note').value.trim();
+    ensureName(function () {
+      if (!db) return;
+      db.collection('oathGames').add({
+        date: date, chancellor: chancellor, winner: winner, note: note, loggedBy: myName, at: Date.now()
+      }).then(function () {
+        document.getElementById('oathForm').reset();
+        document.getElementById('oath-date').value = todayStr();
+      }).catch(function () {
+        alert('Kon Oath-potje niet opslaan. Probeer opnieuw.');
+      });
+    });
+  });
 
   // --- delegated events on game list ---
   gameList.addEventListener('click', function (e) {
@@ -1100,3 +1444,5 @@
   boot();
 })();
 </script>
+</body>
+</html>
