@@ -10,7 +10,7 @@
 <title>Vier Man, Eén Doos</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Fraunces:opsz,wght@9..144,400..700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Fredericka+the+Great&family=Fraunces:opsz,wght@9..144,400..700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
   :root, :root[data-theme="dark"] {
     --bg: #140F22;
@@ -65,7 +65,7 @@
       var(--bg);
     background-attachment: fixed;
     color: var(--ink);
-    font-family: 'Press Start 2P', 'Inter', system-ui, sans-serif;
+    font-family: 'Fredericka the Great', 'Fraunces', Georgia, serif;
     line-height: 1.7;
     -webkit-tap-highlight-color: transparent;
     overscroll-behavior-y: contain;
@@ -86,7 +86,7 @@
   }
 
   h1, h2, h3, .display {
-    font-family: 'Press Start 2P', 'Inter', system-ui, sans-serif;
+    font-family: 'Fredericka the Great', 'Fraunces', Georgia, serif;
     font-weight: 400;
     text-wrap: balance;
     letter-spacing: 0;
@@ -107,7 +107,7 @@
   .brand { display: flex; align-items: center; gap: 0.6rem; }
   .brand svg { width: 24px; height: 24px; color: var(--accent); flex: none; filter: drop-shadow(0 0 6px rgba(43, 232, 203, 0.6)); }
   .brand h1 {
-    font-family: 'Press Start 2P', 'Fraunces', Georgia, serif;
+    font-family: 'Fredericka the Great', 'Fraunces', Georgia, serif;
     font-size: 0.82rem; line-height: 1.4; margin: 0; font-weight: 400;
     color: var(--ink);
     text-shadow: 0 0 10px rgba(43, 232, 203, 0.55), 0 0 22px rgba(255, 62, 201, 0.25);
@@ -427,6 +427,8 @@
     width: 100%; max-width: 420px; text-align: center;
     max-height: 92vh; overflow-y: auto;
     box-shadow: var(--glow-magenta), 0 8px 30px var(--shadow);
+    /* het rad houdt het retro pixelfont, ook al krijgt de rest van de app een ander lettertype */
+    font-family: 'Press Start 2P', 'Inter', system-ui, sans-serif;
   }
   .wheel-card h2 {
     margin: 0 0 0.9rem; font-family: 'Press Start 2P', 'Fraunces', Georgia, serif;
@@ -528,6 +530,16 @@
   @keyframes bgg-spin { to { transform: rotate(360deg); } }
   .bgg-refresh-status { font-size: 0.74rem; color: var(--ink-faint); }
 
+  .bgg-proxy-settings { margin-top: 0.6rem; font-size: 0.8rem; }
+  .bgg-proxy-settings summary { color: var(--accent); cursor: pointer; font-weight: 600; }
+  .bgg-proxy-hint { color: var(--ink-dim); margin: 0.5rem 0; line-height: 1.6; }
+  .bgg-proxy-steps { color: var(--ink-dim); margin: 0 0 0.6rem; padding-left: 1.2rem; line-height: 1.7; }
+  .bgg-proxy-code {
+    background: var(--bg2); border: 1px solid var(--border); border-radius: 10px;
+    padding: 0.7rem; font-size: 0.72rem; line-height: 1.5; overflow-x: auto;
+    white-space: pre; color: var(--ink-dim); margin: 0 0 0.7rem; font-family: 'Courier New', monospace;
+  }
+
   /* Oath */
   .oath-intro { margin-bottom: 0.9rem; }
   .oath-intro h2 { margin: 0 0 0.5rem; font-size: 1rem; }
@@ -580,10 +592,14 @@
   /* Planned tab */
   .planned-card {
     background: var(--surface); border: 1px solid var(--border); border-radius: 14px;
-    padding: 0.8rem 0.9rem; margin-bottom: 0.6rem; display: flex; align-items: center; gap: 0.7rem;
+    padding: 0.8rem 0.9rem; margin-bottom: 0.6rem; display: flex; align-items: center; gap: 0.7rem; flex-wrap: wrap;
   }
+  .planned-card.overdue { border-color: var(--red); }
   .planned-card .planned-date-big { font-weight: 700; color: var(--accent); font-size: 0.85rem; flex: none; width: 5.4rem; }
-  .planned-card .planned-title { font-weight: 600; }
+  .planned-card.overdue .planned-date-big { color: var(--red); }
+  .planned-card .planned-title { font-weight: 600; flex: 1 1 auto; min-width: 0; }
+  .planned-card .planned-actions { display: flex; gap: 0.4rem; flex: none; margin-left: auto; }
+  .planned-card .plan-btn { font-size: 0.74rem; }
 </style>
 </head>
 <body>
@@ -599,6 +615,7 @@
     </div>
     <div class="tabs" role="tablist">
       <button class="tab active" data-tab="games" role="tab" aria-selected="true">🎲 Spellen</button>
+      <button class="tab" data-tab="played" role="tab" aria-selected="false">✅ Gespeeld</button>
       <button class="tab" data-tab="board" role="tab" aria-selected="false">🏆 Topscore</button>
       <button class="tab" data-tab="oath" role="tab" aria-selected="false">🗡️ Oath</button>
       <button class="tab" data-tab="planned" role="tab" aria-selected="false">📅 Gepland</button>
@@ -625,6 +642,14 @@
     <div class="archive-toggle-row">
       <button type="button" id="archiveToggleBtn" class="archive-toggle-btn">Toon gearchiveerde spellen</button>
     </div>
+  </main>
+
+  <main id="playedView" hidden>
+    <div class="oath-intro">
+      <h2>Gespeeld</h2>
+      <p class="oath-sub">Spellen die al eens op tafel kwamen — staan hier apart, zodat "Spellen" overzichtelijk blijft voor wat nog moet gekozen worden.</p>
+    </div>
+    <div id="playedList" class="game-list"></div>
   </main>
 
   <main id="boardView" hidden>
@@ -676,6 +701,36 @@
         </button>
         <span id="bggRefreshStatus" class="bgg-refresh-status"></span>
       </div>
+      <details class="bgg-proxy-settings">
+        <summary>Werkt dit niet? Eigen (gratis) BGG-doorgeefluik instellen</summary>
+        <p class="bgg-proxy-hint">
+          BGG blokkeert de gratis publieke doorgeefluiken (proxy's) waar deze knop op steunt regelmatig.
+          Een eigen Cloudflare Worker lost dit betrouwbaar op — gratis, geen account met kaartgegevens nodig, 5 minuutjes werk:
+        </p>
+        <ol class="bgg-proxy-steps">
+          <li>Ga naar workers.cloudflare.com en maak een gratis account.</li>
+          <li>"Create" → "Workers" → "Create Worker" → geef een naam → "Deploy".</li>
+          <li>Klik "Edit code", plak het scriptje hieronder erover, klik "Deploy".</li>
+          <li>Kopieer de URL van je Worker (bv. jouwnaam.jouwaccount.workers.dev) en plak 'm hieronder.</li>
+        </ol>
+        <pre class="bgg-proxy-code">export default {
+  async fetch(request) {
+    const target = new URL(request.url).searchParams.get('url');
+    if (!target || !target.startsWith('https://boardgamegeek.com/')) {
+      return new Response('Alleen boardgamegeek.com is toegestaan.', { status: 400 });
+    }
+    const res = await fetch(target, { headers: { 'User-Agent': 'Mozilla/5.0' } });
+    const body = await res.text();
+    return new Response(body, {
+      status: res.status,
+      headers: { 'Content-Type': 'text/xml; charset=utf-8', 'Access-Control-Allow-Origin': '*' }
+    });
+  }
+};</pre>
+        <label class="field"><span>URL van je eigen Worker (optioneel)</span><input id="f-bgg-proxy" type="url" placeholder="https://jouwnaam.jouwaccount.workers.dev/?url=" /></label>
+        <button type="button" id="saveBggProxyBtn" class="upload-btn">Opslaan</button>
+        <span id="bggProxySaveStatus" class="paste-status"></span>
+      </details>
     </div>
     <form id="addForm">
       <label class="field"><span>Titel</span><input id="f-title" required placeholder="bv. Wingspan" /></label>
@@ -868,8 +923,23 @@
 
   // --- BGG live refresh ---
   var BGG_USERNAMES = ['Astcfx', 'Stevebuffalo', 'Woutervanoverwalle', 'Robin'];
-  var CORS_PROXY = 'https://api.allorigins.win/raw?url=';
+  // Publieke CORS-proxy's als (onbetrouwbare) terugval — BGG blokkeert deze regelmatig,
+  // of ze vragen intussen een betaald account. Wie een eigen Cloudflare Worker instelt
+  // (zie de "Werkt dit niet?"-uitleg bij de knop) gebruikt die als eerste, betrouwbaardere optie.
+  var PUBLIC_CORS_PROXIES = [
+    'https://api.allorigins.win/raw?url=',
+    'https://api.codetabs.com/v1/proxy?quest=',
+    'https://corsproxy.io/?url='
+  ];
+  var BGG_PROXY_KEY = 'vmed-bgg-proxy-url';
   var BGG_CACHE_KEY = 'vmed-bgg-cache-v1';
+
+  function loadCustomBggProxy() {
+    try { return localStorage.getItem(BGG_PROXY_KEY) || ''; } catch (e) { return ''; }
+  }
+  function saveCustomBggProxy(url) {
+    try { localStorage.setItem(BGG_PROXY_KEY, url); } catch (e) { /* geen localStorage beschikbaar */ }
+  }
 
   function loadBggCache() {
     try {
@@ -902,11 +972,34 @@
     }
   })();
 
-  function bggProxyFetch(url) {
-    return fetch(CORS_PROXY + encodeURIComponent(url)).then(function (r) {
-      if (!r.ok) throw new Error('BGG-proxy gaf status ' + r.status);
+  (function initBggProxySettings() {
+    var input = document.getElementById('f-bgg-proxy');
+    var saveBtn = document.getElementById('saveBggProxyBtn');
+    var status = document.getElementById('bggProxySaveStatus');
+    if (!input || !saveBtn) return;
+    input.value = loadCustomBggProxy();
+    saveBtn.addEventListener('click', function () {
+      saveCustomBggProxy(input.value.trim());
+      status.textContent = input.value.trim() ? '✅ Opgeslagen — geldt vanaf de volgende verversing.' : 'Leeg opgeslagen — terug naar de publieke proxy\'s.';
+      setTimeout(function () { status.textContent = ''; }, 3500);
+    });
+  })();
+
+  function fetchViaProxy(proxyUrl, targetUrl) {
+    // elke proxy (eigen Worker of publiek) verwacht de doel-URL ge-encodeerd achter
+    // zijn eigen "?param=" te staan, dus gewoon aan elkaar plakken werkt voor alle drie.
+    return fetch(proxyUrl + encodeURIComponent(targetUrl)).then(function (r) {
+      if (!r.ok) throw new Error('proxy gaf status ' + r.status);
       return r.text();
     });
+  }
+
+  function bggProxyFetch(url) {
+    var custom = loadCustomBggProxy();
+    var chain = (custom ? [custom] : []).concat(PUBLIC_CORS_PROXIES);
+    return chain.reduce(function (promise, proxyUrl) {
+      return promise.catch(function () { return fetchViaProxy(proxyUrl, url); });
+    }, Promise.reject());
   }
 
   function fetchCollectionXmlWithRetry(username, triesLeft) {
@@ -1362,11 +1455,14 @@
       btn.classList.add('active'); btn.setAttribute('aria-selected', 'true');
       var tab = btn.dataset.tab;
       document.getElementById('gamesView').hidden = tab !== 'games';
+      document.getElementById('playedView').hidden = tab !== 'played';
       document.getElementById('boardView').hidden = tab !== 'board';
       document.getElementById('oathView').hidden = tab !== 'oath';
       document.getElementById('plannedView').hidden = tab !== 'planned';
       if (tab === 'games') {
         rollSurpriseCopy();
+      } else if (tab === 'played') {
+        renderPlayed();
       } else if (tab === 'board') {
         renderLeaderboard();
         lbLoadedOnce = true;
@@ -1536,25 +1632,58 @@
     var playersVal = playersFilterEl.value;
     var visibleBase = showArchived ? games : nonArchived;
     var list = visibleBase.filter(function (g) {
-      if (query) {
-        var titleLower = (g.title || '').toLowerCase();
-        var titleWords = titleLower.split(/\s+/).filter(Boolean);
-        // match if the query is a prefix of the title starting at any word boundary,
-        // so both a single word ("bligh...") and a multi-word phrase ("blighted reach...") work
-        var titleMatches = titleWords.some(function (w, i) {
-          return titleWords.slice(i).join(' ').indexOf(query) === 0;
-        });
-        var addedByMatches = (g.addedBy || '').toLowerCase().indexOf(query) === 0;
-        if (!titleMatches && !addedByMatches) return false;
+      // al gespeelde spellen schuiven naar de 'Gespeeld'-tab, zodat hier enkel nog
+      // te kiezen (ongespeelde) spellen overblijven — behalve wanneer gearchiveerde
+      // spellen expliciet getoond worden, dan is dit een "toon alles"-overzicht.
+      if (!showArchived) {
+        var stCheck = statsMap[g.id];
+        if (stCheck && stCheck.playCount > 0) return false;
       }
+      if (query && !titleOrAdderMatches(g, query)) return false;
       return matchesPlayersFilter(g, playersVal);
     }).sort(function (a, b) { return idxMap[a.id] - idxMap[b.id]; });
     if (!list.length) {
-      gameList.innerHTML = '<p class="no-results">Niks gevonden. Zelfs het rad kan dit niet oplossen. 🤷</p>';
+      gameList.innerHTML = '<p class="no-results">' +
+        (query ? 'Niks gevonden. Zelfs het rad kan dit niet oplossen. 🤷' : 'Alles hier is al gespeeld — kijk bij "Gespeeld", of voeg een nieuw spel toe. 🎉') +
+        '</p>';
     } else {
       gameList.innerHTML = list.map(function (g) { return gameCardHTML(g, idxMap[g.id], fullSorted.length); }).join('');
     }
     renderPlanned();
+    if (!document.getElementById('playedView').hidden) renderPlayed();
+  }
+
+  function titleOrAdderMatches(g, query) {
+    var titleLower = (g.title || '').toLowerCase();
+    var titleWords = titleLower.split(/\s+/).filter(Boolean);
+    // match if the query is a prefix of the title starting at any word boundary,
+    // so both a single word ("bligh...") and a multi-word phrase ("blighted reach...") work
+    var titleMatches = titleWords.some(function (w, i) {
+      return titleWords.slice(i).join(' ').indexOf(query) === 0;
+    });
+    var addedByMatches = (g.addedBy || '').toLowerCase().indexOf(query) === 0;
+    return titleMatches || addedByMatches;
+  }
+
+  function renderPlayed() {
+    var listEl = document.getElementById('playedList');
+    if (!listEl) return;
+    var fullSorted = sortedGames();
+    var idxMap = {};
+    fullSorted.forEach(function (g, i) { idxMap[g.id] = i; });
+    var playedGames = games.filter(function (g) {
+      if (g.archived) return false;
+      var st = statsMap[g.id];
+      return st && st.playCount > 0;
+    }).sort(function (a, b) {
+      var sa = statsMap[a.id] || {}, sb = statsMap[b.id] || {};
+      return (sb.lastPlayed || '').localeCompare(sa.lastPlayed || '');
+    });
+    if (!playedGames.length) {
+      listEl.innerHTML = '<p class="no-plays">Nog geen enkel spel gespeeld — de eerste keer is altijd het leukst. 🎉</p>';
+      return;
+    }
+    listEl.innerHTML = playedGames.map(function (g) { return gameCardHTML(g, idxMap[g.id], fullSorted.length); }).join('');
   }
 
   function moveRank(id, dir) {
@@ -1572,6 +1701,22 @@
       db.doc('games/' + a.id).update({ order: ob }),
       db.doc('games/' + b.id).update({ order: oa })
     ]).catch(function () { /* volgende sync corrigeert */ });
+  }
+
+  // Oude bug (nu opgelost): het rulebook-veld werd voor sommige spellen per ongeluk
+  // gevuld met de BGG-paginalink zelf, in plaats van een echte rulebook-link. Dit
+  // ruimt dat eenmalig, per spel, automatisch op.
+  var cleanedBggLinksFor = {};
+  function cleanupSwappedBggLinks() {
+    games.forEach(function (g) {
+      if (cleanedBggLinksFor[g.id]) return;
+      var isBggLink = typeof g.rulebookUrl === 'string' && g.rulebookUrl.indexOf('boardgamegeek.com') !== -1;
+      if (!isBggLink) return;
+      cleanedBggLinksFor[g.id] = true;
+      var patch = { rulebookUrl: '' };
+      if (!g.bggUrl) patch.bggUrl = g.rulebookUrl;
+      db.doc('games/' + g.id).update(patch).catch(function () {});
+    });
   }
 
   function setPlannedDate(id, dateStr) {
@@ -1692,7 +1837,7 @@
   });
 
   // --- delegated events on game list ---
-  gameList.addEventListener('click', function (e) {
+  function handleGameListClick(e) {
     var voteBtn = e.target.closest('.vote-btn');
     if (voteBtn) { toggleVote(voteBtn.dataset.id); return; }
     var expandBtn = e.target.closest('.expand-btn');
@@ -1736,7 +1881,9 @@
       setPlannedDate(planBtn.dataset.id, input);
       return;
     }
-  });
+  }
+  gameList.addEventListener('click', handleGameListClick);
+  document.getElementById('playedList').addEventListener('click', handleGameListClick);
 
   gameList.addEventListener('submit', function (e) {
     if (!e.target.classList.contains('play-form')) return;
@@ -2008,18 +2155,72 @@
     });
   }
 
+  function plannedCardHTML(g, overdue) {
+    return (
+      '<div class="planned-card' + (overdue ? ' overdue' : '') + '">' +
+        '<span class="planned-date-big">' + esc(formatDate(g.plannedDate)) + '</span>' +
+        '<span class="planned-title">' + esc(g.title) + '</span>' +
+        '<span class="planned-actions">' +
+          '<button type="button" class="plan-btn" data-id="' + g.id + '" data-cur="' + esc(g.plannedDate) + '">wijzigen</button>' +
+          '<button type="button" class="plan-btn" data-id="' + g.id + '" data-clear="1">verwijderen</button>' +
+        '</span>' +
+      '</div>'
+    );
+  }
+
   function renderPlanned() {
     var listEl = document.getElementById('plannedList');
     if (!listEl) return;
-    var withDates = games.filter(function (g) { return g.plannedDate && !g.archived; })
+    var today = todayStr();
+    var withDates = games.filter(function (g) { return g.plannedDate && !g.archived; });
+    var upcoming = withDates.filter(function (g) { return g.plannedDate >= today; })
       .sort(function (a, b) { return (a.plannedDate || '').localeCompare(b.plannedDate || ''); });
-    if (!withDates.length) {
+    var overdue = withDates.filter(function (g) { return g.plannedDate < today; })
+      .sort(function (a, b) { return (b.plannedDate || '').localeCompare(a.plannedDate || ''); });
+    if (!upcoming.length && !overdue.length) {
       listEl.innerHTML = '<p class="no-plays">Nog niks op de kalender. Plan een speelavond via een spelkaart bij "Spellen". 📅</p>';
       return;
     }
-    listEl.innerHTML = withDates.map(function (g) {
-      return '<div class="planned-card"><span class="planned-date-big">' + esc(formatDate(g.plannedDate)) + '</span><span class="planned-title">' + esc(g.title) + '</span></div>';
-    }).join('');
+    var html = '';
+    if (upcoming.length) {
+      html += upcoming.map(function (g) { return plannedCardHTML(g, false); }).join('');
+    } else {
+      html += '<p class="no-plays">Niks meer gepland — plan een nieuwe speelavond via een spelkaart bij "Spellen". 📅</p>';
+    }
+    if (overdue.length) {
+      html += '<div class="oath-intro" style="margin-top:1.2rem;"><h3 style="margin:0;">Verlopen</h3><p class="oath-sub">Datum al voorbij, maar nog niet (opnieuw) gepland of gelogd — pas aan of verwijder.</p></div>';
+      html += overdue.map(function (g) { return plannedCardHTML(g, true); }).join('');
+    }
+    listEl.innerHTML = html;
+  }
+
+  document.getElementById('plannedList').addEventListener('click', function (e) {
+    var planBtn = e.target.closest('.plan-btn');
+    if (!planBtn) return;
+    if (planBtn.dataset.clear) { setPlannedDate(planBtn.dataset.id, ''); return; }
+    var current = planBtn.dataset.cur || todayStr();
+    var input = prompt('Wanneer plannen jullie dit spel? (jjjj-mm-dd)', current);
+    if (input === null) return;
+    input = input.trim();
+    if (input && !/^\d{4}-\d{2}-\d{2}$/.test(input)) { alert('Gebruik het formaat jjjj-mm-dd.'); return; }
+    setPlannedDate(planBtn.dataset.id, input);
+  });
+
+  // Eenmaal een geplande datum voorbij is én het spel intussen ook echt gespeeld werd
+  // (op of na die datum), heeft de planning haar werk gedaan: het spel verdwijnt dan
+  // automatisch uit "Gepland" (het staat toch al bij "Gespeeld"). Nog niet gespeelde
+  // verlopen data blijven bewust staan, onder "Verlopen", zodat ze aangepast kunnen worden.
+  var clearedPlannedFor = {};
+  function autoClearPlayedPlannedDates() {
+    var today = todayStr();
+    games.forEach(function (g) {
+      if (!g.plannedDate || g.plannedDate >= today || clearedPlannedFor[g.id]) return;
+      var st = statsMap[g.id];
+      if (st && st.playCount > 0 && st.lastPlayed && st.lastPlayed >= g.plannedDate) {
+        clearedPlannedFor[g.id] = true;
+        db.doc('games/' + g.id).update({ plannedDate: '' }).catch(function () {});
+      }
+    });
   }
 
   function subscribeGames() {
@@ -2034,6 +2235,8 @@
       render();
       if (!document.getElementById('boardView').hidden) renderLeaderboard();
       if (!statsMigrationStarted) { statsMigrationStarted = true; migratePendingGames(); }
+      autoClearPlayedPlannedDates();
+      cleanupSwappedBggLinks();
     }, function () {
       statusLine.textContent = 'Kon spellen niet laden. Probeer de pagina opnieuw te openen.';
     });
