@@ -458,6 +458,15 @@
   }
   .bgg-collection-add-btn:hover { filter: brightness(1.15); }
 
+  .manual { display: flex; flex-direction: column; gap: 0.9rem; }
+  .manual-block {
+    background: var(--surface); border: 1px solid var(--border); border-radius: 14px;
+    padding: 0.9rem 1rem;
+  }
+  .manual-block h3 { margin: 0 0 0.5rem; font-size: 1rem; }
+  .manual-block ul { margin: 0; padding-left: 1.1rem; display: flex; flex-direction: column; gap: 0.3rem; }
+  .manual-block li { font-size: 0.86rem; color: var(--ink-dim); line-height: 1.55; }
+
   a.rulebook-link { color: var(--accent); }
 
   /* Planned date */
@@ -677,6 +686,7 @@
       <button class="tab" data-tab="oath" role="tab" aria-selected="false">🗡️ Oath</button>
       <button class="tab" data-tab="planned" role="tab" aria-selected="false">📅 Gepland</button>
       <button class="tab" data-tab="collection" role="tab" aria-selected="false">📚 Collectie</button>
+      <button class="tab" data-tab="wouter" role="tab" aria-selected="false">❓ Wouter</button>
     </div>
   </header>
 
@@ -733,6 +743,65 @@
     </div>
     <p id="collectionCount" class="play-stat" style="margin-bottom:0.6rem;"></p>
     <div id="collectionList" class="bgg-collection-list"></div>
+  </main>
+
+  <main id="wouterView" hidden>
+    <div class="oath-intro">
+      <h2>Handleiding</h2>
+      <p class="oath-sub">Korte uitleg bij elk onderdeel van de app.</p>
+    </div>
+    <div class="manual">
+      <section class="manual-block">
+        <h3>🎲 Spellen</h3>
+        <ul>
+          <li>Alle spellen die nog niet gespeeld zijn, op volgorde van de pijltjes links op de kaart.</li>
+          <li>⭐ Stem = jouw stem dat je dit spel graag wil spelen. Aantal sterren = aantal stemmen.</li>
+          <li>✔️ Regels gekend = geeft aan dat jij de spelregels al kent.</li>
+          <li>"Potje loggen" registreert een gespeeld potje met datum en winnaar.</li>
+          <li>+ speeldatum plannen zet het spel in het tabblad Gepland.</li>
+          <li>🎰-knop draait het rad van fortuin uit de nog niet gespeelde spellen.</li>
+        </ul>
+      </section>
+      <section class="manual-block">
+        <h3>✅ Gespeeld</h3>
+        <ul>
+          <li>Spellen die minstens 1 keer gespeeld zijn, met winnaars en laatste speeldatum.</li>
+        </ul>
+      </section>
+      <section class="manual-block">
+        <h3>🏆 Topscore</h3>
+        <ul>
+          <li>Overzicht van wie het meest wint, over alle gelogde potjes.</li>
+        </ul>
+      </section>
+      <section class="manual-block">
+        <h3>🗡️ Oath</h3>
+        <ul>
+          <li>Apart potjes-logboek, enkel voor het spel Oath.</li>
+        </ul>
+      </section>
+      <section class="manual-block">
+        <h3>📅 Gepland</h3>
+        <ul>
+          <li>Spellen met een vastgelegde speeldatum, met wijzigen/verwijderen.</li>
+          <li>Verlopen datums die niet gespeeld zijn, staan apart onder "Verlopen".</li>
+        </ul>
+      </section>
+      <section class="manual-block">
+        <h3>📚 Collectie</h3>
+        <ul>
+          <li>De volledige BGG-collectie van jullie 4 samen, met eigenaar per spel.</li>
+          <li>"+ toevoegen" zet een spel rechtstreeks op de plank.</li>
+        </ul>
+      </section>
+      <section class="manual-block">
+        <h3>+ Spel toevoegen</h3>
+        <ul>
+          <li>Zoek eerst in "Zoek in jullie BGG-collecties" of via "Toon hele collectie" — dit vult titel, spelers en BGG-link automatisch in.</li>
+          <li>Foto: upload, plak (Ctrl+V) of zoek via de link onderaan het formulier.</li>
+        </ul>
+      </section>
+    </div>
   </main>
 
   <main id="oathView" hidden>
@@ -1573,6 +1642,7 @@
       document.getElementById('oathView').hidden = tab !== 'oath';
       document.getElementById('plannedView').hidden = tab !== 'planned';
       document.getElementById('collectionView').hidden = tab !== 'collection';
+      document.getElementById('wouterView').hidden = tab !== 'wouter';
       if (tab === 'games') {
         rollSurpriseCopy();
       } else if (tab === 'played') {
