@@ -263,6 +263,37 @@
   }
   .voter-chips-empty { font-size: 0.76rem; color: var(--ink-faint); font-style: italic; }
 
+  .rules-known-btn {
+    display: flex; align-items: center; gap: 0.5rem;
+    border: 2px solid var(--ink-faint);
+    background: var(--surface-2);
+    color: var(--ink-faint);
+    font: inherit; font-weight: 700; font-size: 0.85rem;
+    padding: 0.4rem 0.75rem;
+    border-radius: 999px;
+    cursor: pointer;
+  }
+  .rules-known-btn svg { width: 15px; height: 15px; flex-shrink: 0; }
+  .rules-known-btn > span:not(.rules-known-label) { min-width: 0.9em; text-align: center; }
+  .rules-known-btn .rules-known-label {
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    padding-left: 0.5rem;
+    border-left: 1px solid currentColor;
+  }
+  .rules-known-btn.known { background: var(--accent-soft); border-color: var(--accent); color: var(--accent); box-shadow: var(--glow-accent); }
+  .rules-known-btn:hover { filter: brightness(1.15); }
+  .rules-known-btn:active { transform: scale(0.96); }
+
+  .rules-known-chips-row { display: flex; flex-wrap: wrap; gap: 0.35rem; margin-top: 0.55rem; }
+  .rules-known-chip {
+    font-size: 0.74rem; font-weight: 600; color: var(--accent);
+    background: var(--accent-soft); border: 1px solid var(--accent);
+    padding: 0.18rem 0.5rem; border-radius: 999px;
+  }
+  .rules-known-chips-empty { font-size: 0.76rem; color: var(--ink-faint); font-style: italic; }
+
   .play-stat { font-size: 0.82rem; color: var(--ink-dim); font-variant-numeric: tabular-nums; }
   .play-stat strong { color: var(--ink); font-weight: 600; }
 
@@ -399,6 +430,33 @@
   .bgg-result:hover, .bgg-result:focus-visible { background: var(--surface-2); }
   .bgg-result-owners { font-size: 0.72rem; color: var(--ink-faint); flex: none; }
   .bgg-hint { font-size: 0.74rem; color: var(--ink-faint); margin-top: 0.3rem; display: block; }
+  .bgg-search-row { display: flex; gap: 0.5rem; align-items: center; }
+  .bgg-search-row input { flex: 1 1 auto; }
+  .bgg-showall-btn {
+    flex: none; border: 1px solid var(--border); background: var(--surface-2); color: var(--ink-dim);
+    font: inherit; font-size: 0.78rem; font-weight: 600; padding: 0.5rem 0.7rem; border-radius: 10px; cursor: pointer;
+    white-space: nowrap;
+  }
+  .bgg-showall-btn:hover { color: var(--ink); border-color: var(--accent); }
+  .bgg-result-added { font-size: 0.68rem; color: var(--accent); font-weight: 700; flex: none; margin-left: 0.4rem; }
+
+  .bgg-collection-list { display: flex; flex-direction: column; gap: 0.5rem; }
+  .bgg-collection-row {
+    display: flex; align-items: center; justify-content: space-between; gap: 0.6rem; flex-wrap: wrap;
+    background: var(--surface); border: 1px solid var(--border); border-radius: 12px;
+    padding: 0.6rem 0.8rem;
+  }
+  .bgg-collection-row.is-added { border-color: var(--accent); background: var(--accent-soft); }
+  .bgg-collection-main { display: flex; flex-direction: column; gap: 0.15rem; min-width: 0; flex: 1 1 auto; }
+  .bgg-collection-title { font-weight: 700; font-size: 0.92rem; overflow-wrap: break-word; word-break: break-word; }
+  .bgg-collection-owners { font-size: 0.74rem; color: var(--ink-faint); }
+  .bgg-collection-actions { flex: none; display: flex; align-items: center; gap: 0.5rem; }
+  .bgg-collection-added-badge { font-size: 0.72rem; color: var(--accent); font-weight: 700; }
+  .bgg-collection-add-btn {
+    border: 1px solid var(--accent); background: var(--accent-soft); color: var(--accent);
+    font: inherit; font-weight: 700; font-size: 0.78rem; padding: 0.35rem 0.65rem; border-radius: 999px; cursor: pointer;
+  }
+  .bgg-collection-add-btn:hover { filter: brightness(1.15); }
 
   a.rulebook-link { color: var(--accent); }
 
@@ -618,6 +676,7 @@
       <button class="tab" data-tab="board" role="tab" aria-selected="false">🏆 Topscore</button>
       <button class="tab" data-tab="oath" role="tab" aria-selected="false">🗡️ Oath</button>
       <button class="tab" data-tab="planned" role="tab" aria-selected="false">📅 Gepland</button>
+      <button class="tab" data-tab="collection" role="tab" aria-selected="false">📚 Collectie</button>
     </div>
   </header>
 
@@ -664,6 +723,18 @@
     <div id="plannedList"></div>
   </main>
 
+  <main id="collectionView" hidden>
+    <div class="oath-intro">
+      <h2>Collectie</h2>
+      <p class="oath-sub">De volledige, gezamenlijke bordspellencollectie van Astcfx, Stevebuffalo, Woutervanoverwalle en Robin op BGG — inclusief wie het spel bezit en of het al op de plank staat.</p>
+    </div>
+    <div class="filter-bar">
+      <input id="collectionSearch" type="search" class="search-input" placeholder="Zoek in de hele collectie…" autocomplete="off" />
+    </div>
+    <p id="collectionCount" class="play-stat" style="margin-bottom:0.6rem;"></p>
+    <div id="collectionList" class="bgg-collection-list"></div>
+  </main>
+
   <main id="oathView" hidden>
     <div class="oath-intro">
       <h2>Oath</h2>
@@ -690,7 +761,10 @@
     <h2 id="addSheetTitle">Nieuw spel</h2>
     <div class="bgg-search-wrap field">
       <span>Zoek in jullie BGG-collecties</span>
-      <input id="bggSearch" autocomplete="off" placeholder="typ een titel…" />
+      <div class="bgg-search-row">
+        <input id="bggSearch" autocomplete="off" placeholder="typ een titel…" />
+        <button type="button" id="bggShowAllBtn" class="bgg-showall-btn">Toon hele collectie</button>
+      </div>
       <div id="bggResults" class="bgg-results" hidden></div>
       <span class="bgg-hint">Doorzoekt de collecties van Astcfx, Stevebuffalo, Woutervanoverwalle en Robin · vult titel, spelers en BGG-pagina in</span>
       <div class="bgg-refresh-row">
@@ -829,6 +903,7 @@
   var ICON_EMPTY = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="3" width="18" height="18" rx="4"/><path d="M8 12h8M12 8v8" stroke-linecap="round"/></svg>';
   var ICON_DICE = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="4"/><circle cx="8" cy="8" r="1.1" fill="currentColor" stroke="none"/><circle cx="16" cy="8" r="1.1" fill="currentColor" stroke="none"/><circle cx="8" cy="16" r="1.1" fill="currentColor" stroke="none"/><circle cx="16" cy="16" r="1.1" fill="currentColor" stroke="none"/><circle cx="12" cy="12" r="1.1" fill="currentColor" stroke="none"/></svg>';
   var ICON_CALENDAR = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3.5" y="5" width="17" height="16" rx="3"/><path d="M8 3v4M16 3v4M3.5 10h17" stroke-linecap="round"/></svg>';
+  var ICON_CHECK = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="3.5" y="3.5" width="17" height="17" rx="4"/><path d="M7.5 12.5l3 3 6-6.5" stroke-linecap="round" stroke-linejoin="round"/></svg>';
 
   function esc(s) {
     return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) {
@@ -1154,6 +1229,8 @@
       });
     }).then(function () {
       bggRefreshStatus.textContent = 'Bijgewerkt · zonet';
+      var collView = document.getElementById('collectionView');
+      if (collView && !collView.hidden) renderCollectionTab(collectionSearchEl.value);
     }).catch(function (err) {
       bggRefreshStatus.textContent = 'BGG blokkeert dit vaak automatisch — upload liever zelf een foto bij het spel.';
     }).finally(function () {
@@ -1199,6 +1276,9 @@
     editingGameId = null;
     addSheetTitle.textContent = 'Nieuw spel';
     addSubmitBtn.textContent = 'Toevoegen';
+    bggShowingAll = false;
+    bggResults.hidden = true;
+    bggResults.innerHTML = '';
     document.getElementById('addForm').reset();
     uploadPreview.src = '';
     uploadPreview.classList.remove('show');
@@ -1333,15 +1413,24 @@
   // --- BGG collectie zoeken (Astcfx, Stevebuffalo, Woutervanoverwalle) ---
   var bggSearch = document.getElementById('bggSearch');
   var bggResults = document.getElementById('bggResults');
+  var bggShowAllBtn = document.getElementById('bggShowAllBtn');
+  var bggShowingAll = false;
 
-  function renderBggResults(query) {
-    var q = query.trim().toLowerCase();
-    if (!q) { bggResults.hidden = true; bggResults.innerHTML = ''; return; }
-    var idxMatches = [];
-    for (var i = 0; i < BGG_GAMES.length; i++) {
-      if (BGG_GAMES[i].title.toLowerCase().indexOf(q) !== -1) idxMatches.push(i);
-      if (idxMatches.length >= 8) break;
-    }
+  function normTitle(t) { return (t || '').trim().toLowerCase(); }
+
+  function isGameAdded(title) {
+    var n = normTitle(title);
+    if (!n) return false;
+    return games.some(function (g) { return normTitle(g.title) === n; });
+  }
+
+  function sortedBggIndexes() {
+    var idxs = BGG_GAMES.map(function (g, i) { return i; });
+    idxs.sort(function (a, b) { return BGG_GAMES[a].title.localeCompare(BGG_GAMES[b].title, 'nl'); });
+    return idxs;
+  }
+
+  function renderBggResultRows(idxMatches) {
     if (!idxMatches.length) {
       bggResults.innerHTML = '<div class="bgg-result" style="cursor:default;">Geen resultaat in de collecties</div>';
       bggResults.hidden = false;
@@ -1349,22 +1438,38 @@
     }
     bggResults.innerHTML = idxMatches.map(function (i) {
       var g = BGG_GAMES[i];
-      return '<div class="bgg-result" tabindex="0" data-idx="' + i + '"><span>' + esc(g.title) + '</span><span class="bgg-result-owners">' + esc(g.owners.join(', ')) + '</span></div>';
+      var addedBadge = isGameAdded(g.title) ? '<span class="bgg-result-added">✓ toegevoegd</span>' : '';
+      return '<div class="bgg-result" tabindex="0" data-idx="' + i + '"><span>' + esc(g.title) + '</span><span class="bgg-result-owners">' + esc(g.owners.join(', ')) + addedBadge + '</span></div>';
     }).join('');
     bggResults.hidden = false;
   }
 
-  bggSearch.addEventListener('input', function () { renderBggResults(bggSearch.value); });
+  function renderBggResults(query) {
+    var q = query.trim().toLowerCase();
+    if (!q) {
+      if (bggShowingAll) { renderBggResultRows(sortedBggIndexes()); return; }
+      bggResults.hidden = true; bggResults.innerHTML = ''; return;
+    }
+    var idxMatches = [];
+    for (var i = 0; i < BGG_GAMES.length; i++) {
+      if (BGG_GAMES[i].title.toLowerCase().indexOf(q) !== -1) idxMatches.push(i);
+      if (!bggShowingAll && idxMatches.length >= 8) break;
+    }
+    renderBggResultRows(idxMatches);
+  }
+
+  bggSearch.addEventListener('input', function () { bggShowingAll = false; renderBggResults(bggSearch.value); });
   bggSearch.addEventListener('focus', function () { if (bggSearch.value.trim()) renderBggResults(bggSearch.value); });
+  bggShowAllBtn.addEventListener('click', function () {
+    bggShowingAll = true;
+    renderBggResults(bggSearch.value);
+    bggSearch.focus();
+  });
   document.addEventListener('click', function (e) {
-    if (!bggResults.contains(e.target) && e.target !== bggSearch) bggResults.hidden = true;
+    if (!bggResults.contains(e.target) && e.target !== bggSearch && e.target !== bggShowAllBtn) { bggResults.hidden = true; bggShowingAll = false; }
   });
 
-  bggResults.addEventListener('click', function (e) {
-    var row = e.target.closest('.bgg-result[data-idx]');
-    if (!row) return;
-    var g = BGG_GAMES[parseInt(row.dataset.idx, 10)];
-    if (!g) return;
+  function fillFormFromBggGame(g) {
     document.getElementById('f-title').value = g.title;
     if (g.id) document.getElementById('f-bgg').value = 'https://boardgamegeek.com/boardgame/' + g.id;
     if (g.minPlayers && g.maxPlayers) {
@@ -1378,7 +1483,16 @@
     selectedBggMinPlayers = (typeof g.minPlayers === 'number') ? g.minPlayers : null;
     selectedBggMaxPlayers = (typeof g.maxPlayers === 'number') ? g.maxPlayers : null;
     updatePhotoSuggest();
+  }
+
+  bggResults.addEventListener('click', function (e) {
+    var row = e.target.closest('.bgg-result[data-idx]');
+    if (!row) return;
+    var g = BGG_GAMES[parseInt(row.dataset.idx, 10)];
+    if (!g) return;
+    fillFormFromBggGame(g);
     bggSearch.value = '';
+    bggShowingAll = false;
     bggResults.hidden = true;
     bggResults.innerHTML = '';
     document.getElementById('f-players').focus();
@@ -1458,6 +1572,7 @@
       document.getElementById('boardView').hidden = tab !== 'board';
       document.getElementById('oathView').hidden = tab !== 'oath';
       document.getElementById('plannedView').hidden = tab !== 'planned';
+      document.getElementById('collectionView').hidden = tab !== 'collection';
       if (tab === 'games') {
         rollSurpriseCopy();
       } else if (tab === 'played') {
@@ -1469,7 +1584,57 @@
         if (!oathLoadedOnce) { oathLoadedOnce = true; subscribeOath(); }
       } else if (tab === 'planned') {
         renderPlanned();
+      } else if (tab === 'collection') {
+        renderCollectionTab(collectionSearchEl.value);
       }
+    });
+  });
+
+  // --- Collectie-tab: volledige gezamenlijke BGG-collectie doorbladeren ---
+  var collectionSearchEl = document.getElementById('collectionSearch');
+  var collectionListEl = document.getElementById('collectionList');
+  var collectionCountEl = document.getElementById('collectionCount');
+
+  function renderCollectionTab(query) {
+    var q = normTitle(query);
+    var idxs = sortedBggIndexes();
+    if (q) idxs = idxs.filter(function (i) { return BGG_GAMES[i].title.toLowerCase().indexOf(q) !== -1; });
+    collectionCountEl.textContent = idxs.length + ' van ' + BGG_GAMES.length + ' spellen in de gezamenlijke collectie';
+    if (!idxs.length) {
+      collectionListEl.innerHTML = '<p class="no-plays">Geen spellen gevonden.</p>';
+      return;
+    }
+    collectionListEl.innerHTML = idxs.map(function (i) {
+      var g = BGG_GAMES[i];
+      var added = isGameAdded(g.title);
+      var actionHtml = added
+        ? '<span class="bgg-collection-added-badge">✓ al op de plank</span>'
+        : '<button type="button" class="bgg-collection-add-btn" data-idx="' + i + '">+ toevoegen</button>';
+      return (
+        '<div class="bgg-collection-row' + (added ? ' is-added' : '') + '">' +
+          '<div class="bgg-collection-main">' +
+            '<span class="bgg-collection-title">' + esc(g.title) + '</span>' +
+            '<span class="bgg-collection-owners">' + esc(g.owners.join(', ')) + '</span>' +
+          '</div>' +
+          '<div class="bgg-collection-actions">' + actionHtml + '</div>' +
+        '</div>'
+      );
+    }).join('');
+  }
+
+  collectionSearchEl.addEventListener('input', function () { renderCollectionTab(collectionSearchEl.value); });
+
+  collectionListEl.addEventListener('click', function (e) {
+    var btn = e.target.closest('.bgg-collection-add-btn[data-idx]');
+    if (!btn) return;
+    var g = BGG_GAMES[parseInt(btn.dataset.idx, 10)];
+    if (!g) return;
+    ensureName(function () {
+      editingGameId = null;
+      addSheetTitle.textContent = 'Nieuw spel';
+      addSubmitBtn.textContent = 'Toevoegen';
+      addSheet.hidden = false;
+      fillFormFromBggGame(g);
     });
   });
 
@@ -1485,7 +1650,7 @@
   }
 
   function gameCardHTML(g, pos, total) {
-    var st = statsMap[g.id] || { voteCount: 0, votedByMe: false, playCount: 0, lastPlayed: null, winners: [], plays: [], voters: [] };
+    var st = statsMap[g.id] || { voteCount: 0, votedByMe: false, playCount: 0, lastPlayed: null, winners: [], plays: [], voters: [], rulesKnownCount: 0, rulesKnownByMe: false, rulesKnownNames: [] };
     var metaPills = '';
     if (g.category) metaPills += '<span class="pill pill-category">' + esc(g.category) + '</span>';
     if (g.players) metaPills += '<span class="pill">' + esc(g.players) + ' spelers</span>';
@@ -1514,6 +1679,11 @@
     var voterChipsHtml = (st.voters && st.voters.length)
       ? '<div class="voter-chips-row">' + st.voters.map(function (n) { return '<span class="voter-chip">' + esc(n) + '</span>'; }).join('') + '</div>'
       : '<div class="voter-chips-row voter-chips-empty">Nog niemand gestemd — wees de eerste!</div>';
+    var rulesKnownLabel = st.rulesKnownByMe ? 'Regels gekend' : 'Regels gekend?';
+    var rulesKnownBtnHtml = '<button class="rules-known-btn' + (st.rulesKnownByMe ? ' known' : '') + '" data-id="' + g.id + '">' + ICON_CHECK + '<span>' + st.rulesKnownCount + '</span><span class="rules-known-label">' + rulesKnownLabel + '</span></button>';
+    var rulesKnownChipsHtml = (st.rulesKnownNames && st.rulesKnownNames.length)
+      ? '<div class="rules-known-chips-row">' + st.rulesKnownNames.map(function (n) { return '<span class="rules-known-chip">' + esc(n) + '</span>'; }).join('') + '</div>'
+      : '';
     var addedByHtml = g.addedBy ? '<div class="added-by">toegevoegd door ' + esc(g.addedBy) + '</div>' : '';
     var thumbHtml = g.imageUrl
       ? '<img class="card-thumb" src="' + esc(g.imageUrl) + '" alt="" loading="lazy" onerror="this.style.display=\'none\'" />'
@@ -1550,10 +1720,12 @@
         plannedRow +
         '<div class="stats-row">' +
           voteBtnHtml +
+          rulesKnownBtnHtml +
           '<span class="play-stat"><strong>' + st.playCount + '×</strong> gespeeld · ' + lastPlayedText + '</span>' +
           '<button class="expand-btn" data-id="' + g.id + '" aria-expanded="false">Potje loggen' + ICON_CHEV + '</button>' +
         '</div>' +
         voterChipsHtml +
+        rulesKnownChipsHtml +
         '<div class="panel" id="panel-' + g.id + '" hidden>' +
           winChips +
           '<form class="play-form" data-id="' + g.id + '">' +
@@ -1839,6 +2011,8 @@
   function handleGameListClick(e) {
     var voteBtn = e.target.closest('.vote-btn');
     if (voteBtn) { toggleVote(voteBtn.dataset.id); return; }
+    var rulesKnownBtn = e.target.closest('.rules-known-btn');
+    if (rulesKnownBtn) { toggleRulesKnown(rulesKnownBtn.dataset.id); return; }
     var expandBtn = e.target.closest('.expand-btn');
     if (expandBtn) {
       var panel = document.getElementById('panel-' + expandBtn.dataset.id);
@@ -2012,13 +2186,18 @@
     var winnersObj = g.winners || {};
     var winners = Object.keys(winnersObj).map(function (k) { return winnersObj[k]; })
       .sort(function (a, b) { return b.count - a.count; });
+    var rulesKnown = g.rulesKnown || {};
+    var rulesKnownNames = Object.keys(rulesKnown).map(function (k) { return rulesKnown[k]; });
     return {
       voteCount: voterNames.length,
       votedByMe: !!voters[voterId],
       voters: voterNames,
       playCount: g.playCount || 0,
       lastPlayed: g.lastPlayed || null,
-      winners: winners
+      winners: winners,
+      rulesKnownCount: rulesKnownNames.length,
+      rulesKnownByMe: !!rulesKnown[voterId],
+      rulesKnownNames: rulesKnownNames
     };
   }
 
@@ -2092,6 +2271,28 @@
         patch.statsV2 = true;
         db.doc('games/' + id).update(patch).catch(function () {
           alert('Kon stem niet opslaan. Probeer opnieuw.');
+        });
+      });
+    });
+  }
+
+  function toggleRulesKnown(id) {
+    ensureName(function () {
+      if (!db) return;
+      var g0 = games.find(function (x) { return x.id === id; });
+      if (!g0) return;
+      ensureGameMigrated(g0).then(function (g) {
+        var wasKnown = !!(g.rulesKnown && g.rulesKnown[voterId]);
+        g.rulesKnown = Object.assign({}, g.rulesKnown);
+        if (wasKnown) delete g.rulesKnown[voterId]; else g.rulesKnown[voterId] = myName;
+        g.statsV2 = true;
+        statsMap[id] = statsFromGame(g);
+        render();
+        var patch = {};
+        patch['rulesKnown.' + voterId] = wasKnown ? firebase.firestore.FieldValue.delete() : myName;
+        patch.statsV2 = true;
+        db.doc('games/' + id).update(patch).catch(function () {
+          alert('Kon vinkje niet opslaan. Probeer opnieuw.');
         });
       });
     });
@@ -2229,10 +2430,11 @@
       games.forEach(function (g) {
         statsMap[g.id] = g.statsV2
           ? statsFromGame(g)
-          : (statsMap[g.id] || { voteCount: 0, votedByMe: false, voters: [], playCount: 0, lastPlayed: null, winners: [] });
+          : (statsMap[g.id] || { voteCount: 0, votedByMe: false, voters: [], playCount: 0, lastPlayed: null, winners: [], rulesKnownCount: 0, rulesKnownByMe: false, rulesKnownNames: [] });
       });
       render();
       if (!document.getElementById('boardView').hidden) renderLeaderboard();
+      if (!document.getElementById('collectionView').hidden) renderCollectionTab(collectionSearchEl.value);
       if (!statsMigrationStarted) { statsMigrationStarted = true; migratePendingGames(); }
       autoClearPlayedPlannedDates();
       cleanupSwappedBggLinks();
