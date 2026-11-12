@@ -2887,7 +2887,7 @@
     }
   } catch (e) {}
   var tnList = [];
-  var TN_TIMES = [[0, 'Maakt niet uit'], [45, 'Kort · tot 45 min'], [90, 'Tot 1,5 uur'], [150, 'Tot 2,5 uur']];
+  var TN_TIMES = [[0, 'Maakt niet uit'], [45, 'Kort · tot 45 min'], [90, 'Tot 1,5 uur'], [150, 'Tot 2,5 uur'], [999, 'Meer dan 2,5 uur']];
 
   function minutesOf(g, b) {
     if (b && (b.maxT || b.minT)) return b.maxT || b.minT;
@@ -2929,6 +2929,7 @@
           if (r && tn.who.indexOf(p) !== -1) { sc += (r - 7) * 0.5; why.push('💬 ' + p + ' gaf het zelf ' + r + '/10'); }
         });
       }
+      if (tn.time === 999 && mins && mins > 150) { sc += 4; why.push('🌙 Lang spel, past bij een lange avond'); }
       var tt = (gm && gm.playTime) || (b ? timeText(b) : ''), ptxt = (gm && gm.players) || (b ? playersText(b) : '');
       if (tt || ptxt) why.push('⏱️ ' + [tt, ptxt ? ptxt + ' spelers' : ''].filter(Boolean).join(' · '));
       if (here.length) why.push({ box: true, t: '📦 ' + (here.length === 1 ? here[0] + ' brengt de doos mee' : listNames(here, 'of') + ' brengt de doos mee') });
