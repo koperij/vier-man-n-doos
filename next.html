@@ -744,6 +744,52 @@
   .vn-log-date { font-size: 0.7rem; color: var(--ink-faint); }
   .vn-log-note { font-size: 0.78rem; color: var(--ink-dim); font-style: italic; }
   .vn-playchips { margin-bottom: 0.3rem; }
+
+  /* ===== v3: compacte kaart, Gespeeld-logboek, Oath-kroniek ===== */
+  .vn-card { padding: 0.8rem 0.9rem 0.7rem; }
+  .vn-card-main { display: flex; gap: 0.8rem; align-items: center; }
+  .vn-card-cover { flex: none; width: 68px; height: 68px; border-radius: 12px; object-fit: cover; border: 2px solid var(--border); box-shadow: 0 3px 10px var(--shadow); }
+  span.vn-card-cover { font-size: 0.7rem; }
+  .vn-card-body { min-width: 0; flex: 1; }
+  .vn-card-meta { font-size: 0.78rem; color: var(--ink-dim); margin-top: 0.15rem; line-height: 1.45; }
+  .vn-card-box { font-size: 0.76rem; color: var(--accent); line-height: 1.45; }
+  .vn-card-bar { display: flex; align-items: center; gap: 0.6rem; margin-top: 0.65rem; padding-top: 0.55rem; border-top: 1px solid var(--border); }
+  .vn-card-bar .vn-avs { margin: 0; padding: 0; }
+  .vn-card-tools { display: flex; align-items: center; gap: 0.4rem; flex-wrap: wrap; }
+  .vn-tools-right { margin-left: auto; display: flex; align-items: center; }
+  .vn-card-line { font-size: 0.8rem; color: var(--ink-dim); margin-top: 0.5rem; }
+  .vn-sub { font-family: inherit; font-size: 0.72rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; color: var(--ink-faint); margin: 0.9rem 0 0.5rem; }
+  .vn-prow { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; overflow: hidden; }
+  .vn-prow.open { border-color: var(--accent); }
+  .vn-prow-head { display: flex; gap: 0.7rem; align-items: center; width: 100%; background: none; border: 0; padding: 0.55rem 0.7rem; font: inherit; color: inherit; text-align: left; cursor: pointer; }
+  .vn-prow-head .chev { width: 14px; height: 14px; margin-left: auto; flex: none; color: var(--ink-faint); transition: transform 0.15s ease; }
+  .vn-prow.open .chev { transform: rotate(180deg); }
+  .vn-prow-win { color: var(--gold); }
+  .vn-prow-panel { padding: 0.2rem 0.8rem 0.8rem; border-top: 1px dashed var(--border); }
+  .vn-hist { padding: 0.45rem 0; border-bottom: 1px dashed var(--border); font-size: 0.85rem; line-height: 1.45; }
+  .vn-prow-panel details { margin-top: 0.8rem; }
+  .vn-prow-panel summary { cursor: pointer; font-weight: 700; font-size: 0.85rem; color: var(--accent); margin-bottom: 0.6rem; }
+  .vn-tag { flex: none; background: var(--accent-soft); color: var(--accent); border: 1px solid var(--accent); font-size: 0.62rem; font-weight: 800; padding: 0.05rem 0.45rem; border-radius: 999px; }
+
+  .oa-hero { position: relative; overflow: hidden; border-radius: 20px; border: 1px solid var(--gold); box-shadow: var(--glow-gold); background: var(--surface); }
+  .oa-hero .vn-hero-bg { opacity: 0.5; filter: blur(16px) saturate(1.2) sepia(0.35); }
+  .oa-hero-in { position: relative; padding: 1.2rem 1.1rem 1.3rem; text-align: center; }
+  .oa-kicker { color: var(--gold); text-shadow: var(--glow-gold); }
+  .oa-crown { display: block; font-size: 2rem; line-height: 1.2; margin-top: 0.5rem; }
+  .oa-ruler { font-family: 'Fraunces', Georgia, serif; font-size: 2.4rem; font-weight: 700; line-height: 1.15; margin: 0 0 0.4rem; color: #FFE9B8; text-shadow: 0 2px 18px rgba(255, 200, 87, 0.55); }
+  .oa-sub { font-size: 0.84rem; color: var(--ink); line-height: 1.5; }
+  .oa-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.6rem; }
+  .oa-p { background: var(--surface); border: 1px solid var(--border); border-left: 3px solid var(--pc); border-radius: 12px; padding: 0.55rem 0.75rem; font-size: 0.8rem; color: var(--ink-dim); line-height: 1.5; }
+  .oa-p strong { display: block; color: var(--ink); font-size: 0.9rem; }
+  .oa-log { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 0.7rem 0.9rem; margin: 0 0 1.2rem; }
+  .oa-log > summary { cursor: pointer; font-weight: 700; color: var(--gold); font-size: 0.88rem; }
+  .oa-log .oath-form { background: none; border: 0; padding: 0.8rem 0 0; margin: 0; }
+  .oa-tl { position: relative; margin-left: 0.5rem; padding: 0.2rem 0 1.5rem 1.3rem; border-left: 2px solid var(--border); display: flex; flex-direction: column; gap: 1rem; }
+  .oa-ev { position: relative; }
+  .oa-ev::before { content: ''; position: absolute; left: calc(-1.3rem - 7px); top: 0.35rem; width: 12px; height: 12px; border-radius: 50%; background: var(--gold); box-shadow: var(--glow-gold); }
+  .oa-ev.coup::before { background: var(--red); box-shadow: 0 0 12px var(--red); }
+  .oa-date { font-size: 0.72rem; color: var(--ink-faint); }
+  .oa-head { font-size: 0.92rem; line-height: 1.45; }
 </style>
 </head>
 <body>
@@ -842,7 +888,9 @@
       <section class="manual-block">
         <h3>🎲 Spellen</h3>
         <ul>
-          <li>Alle spellen die nog niet gespeeld zijn, op volgorde van de pijltjes links op de kaart.</li>
+          <li>Alle spellen die nog niet gespeeld zijn. Standaard staan de meeste stemmen bovenaan; kies "Eigen volgorde" om zelf met pijltjes te rangschikken.</li>
+          <li>"Meer" op een kaart toont plannen, bewerken, archiveren en potje loggen.</li>
+          <li>"Nog niet gestemd" toont enkel de spellen waar jij nog niet op stemde.</li>
           <li>⭐ Stem = jouw stem dat je dit spel graag wil spelen. Aantal sterren = aantal stemmen.</li>
           <li>✔️ Regels gekend = geeft aan dat jij de spelregels al kent.</li>
           <li>"Potje loggen" registreert een gespeeld potje met datum en winnaar.</li>
@@ -853,7 +901,8 @@
       <section class="manual-block">
         <h3>✅ Gespeeld</h3>
         <ul>
-          <li>Spellen die minstens 1 keer gespeeld zijn, met winnaars en laatste speeldatum.</li>
+          <li>Eén rij per gespeeld spel. Tik erop voor alle potjes, of om er nog één te loggen.</li>
+          <li>"Opnieuw spelen?" zet het spel terug bij Spellen en bij de tips van Vanavond.</li>
         </ul>
       </section>
       <section class="manual-block">
@@ -866,7 +915,7 @@
       <section class="manual-block">
         <h3>🗡️ Oath</h3>
         <ul>
-          <li>Apart potjes-logboek, enkel voor het spel Oath.</li>
+          <li>De kroniek van Oath: wie op de troon zit, wie wie eraf stootte, en de tellers per speler.</li>
         </ul>
       </section>
       <section class="manual-block">
@@ -3280,6 +3329,322 @@
       bggRefreshBtn.disabled = false;
       bggRefreshBtn.classList.remove('spinning');
     });
+  }
+
+
+  // ===== v3: compacte Spellen-kaart, Gespeeld als logboek, Oath-kroniek =====
+  var openPanels = {}, playedOpen = {};
+  var spState = { sort: 'votes', todo: false };
+  try { var spSaved = localStorage.getItem('vmed_sort'); if (/^(votes|manual|new|az)$/.test(spSaved || '')) spState.sort = spSaved; } catch (e) {}
+  var EMPTY_STATS = { voteCount: 0, votedByMe: false, playCount: 0, lastPlayed: null, winners: [], voters: [], rulesKnownCount: 0, rulesKnownByMe: false, rulesKnownNames: [] };
+
+  // stemmen per persoon: "Ake" en "Bijvoorbeeld ake" tellen als één
+  function voteInfo(st) {
+    var people = uniquePeople(st.voters), extra = [];
+    (st.voters || []).forEach(function (v) { if (!personOf(v) && extra.indexOf(v) === -1) extra.push(v); });
+    return { people: people, extra: extra, n: people.length + extra.length };
+  }
+
+  playersFilterEl.parentNode.insertAdjacentHTML('beforeend',
+    '<select id="vnSpSort" class="players-filter"><option value="votes">Meeste stemmen</option><option value="manual">Eigen volgorde</option><option value="new">Nieuwst toegevoegd</option><option value="az">A–Z</option></select>');
+  playersFilterEl.parentNode.insertAdjacentHTML('afterend', '<div id="vnSpChips" class="vn-chips" style="margin:-0.2rem 0 0.8rem;"></div>');
+  var spSortEl = document.getElementById('vnSpSort');
+  spSortEl.value = spState.sort;
+  spSortEl.addEventListener('change', function () {
+    spState.sort = spSortEl.value;
+    try { localStorage.setItem('vmed_sort', spState.sort); } catch (e) {}
+    render();
+  });
+  document.getElementById('vnSpChips').addEventListener('click', function (e) {
+    if (e.target.closest('.vn-chip')) { spState.todo = !spState.todo; render(); }
+  });
+  gameList.addEventListener('click', function (e) { // onthoud welke kaarten openstaan
+    var b = e.target.closest('.expand-btn');
+    if (!b) return;
+    var p = document.getElementById('panel-' + b.dataset.id);
+    openPanels[b.dataset.id] = !!p && !p.hidden;
+  });
+
+  function playFormHTML(id) {
+    return '<form class="play-form" data-id="' + id + '">' + playChipsHTML() +
+      '<div class="play-form-row">' +
+        '<label><span class="field-label">Datum</span><input type="date" class="play-date" value="' + todayStr() + '" /></label>' +
+        '<label><span class="field-label">Andere winnaar</span><input class="play-winner" placeholder="optioneel" /></label>' +
+      '</div>' +
+      '<label><span class="field-label">Notitie (optioneel)</span><input class="play-note" placeholder="bv. spannende laatste ronde" /></label>' +
+      '<button type="submit" class="btn btn-primary">Potje opslaan</button></form>';
+  }
+  function toolButtonsHTML(g) {
+    return (g.bggUrl ? '<a class="icon-btn bgg-link" href="' + esc(g.bggUrl) + '" target="_blank" rel="noopener" aria-label="BGG-pagina">' + ICON_DICE + '</a>' : '') +
+      (g.rulebookUrl ? '<a class="icon-btn rulebook-link" href="' + esc(g.rulebookUrl) + '" target="_blank" rel="noopener" aria-label="Rulebook">' + ICON_BOOK + '</a>' : '') +
+      '<button class="icon-btn edit-btn" data-id="' + g.id + '" aria-label="Bewerken">' + ICON_EDIT + '</button>' +
+      '<button class="icon-btn archive-btn" data-id="' + g.id + '" data-archived="' + (g.archived ? '1' : '') + '" aria-label="' + (g.archived ? 'Herstellen' : 'Archiveren') + '">' + (g.archived ? ICON_UNARCHIVE : ICON_ARCHIVE) + '</button>' +
+      '<button class="icon-btn delete-btn" data-id="' + g.id + '" aria-label="Verwijderen">' + ICON_TRASH + '</button>';
+  }
+  function cardMeta(g) {
+    var meta = [];
+    if (g.players) meta.push(esc(g.players) + ' sp.');
+    if (g.playTime) meta.push(esc(g.playTime) + (/^\d+$/.test(g.playTime) ? ' min' : ''));
+    if (g.rating) meta.push('★ ' + esc(g.rating));
+    return meta.join(' · ');
+  }
+
+  function gameCardHTML(g, pos, total) {
+    g = withBgg(g);
+    var st = statsMap[g.id] || EMPTY_STATS, vi = voteInfo(st);
+    var open = !!openPanels[g.id], manual = spState.sort === 'manual';
+    var meta = cardMeta(g), know = uniquePeople(st.rulesKnownNames);
+    var rankBtns = !manual ? '' :
+      '<div class="rank-btns">' +
+        '<button class="rank-btn" data-dir="up" data-id="' + g.id + '" aria-label="Hoger zetten"' + (pos === 0 ? ' disabled' : '') + '><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M5 15l7-7 7 7"/></svg></button>' +
+        '<button class="rank-btn" data-dir="down" data-id="' + g.id + '" aria-label="Lager zetten"' + (pos === total - 1 ? ' disabled' : '') + '><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M5 9l7 7 7-7"/></svg></button>' +
+      '</div>';
+    var plannedRow = g.plannedDate
+      ? '<div class="planned-row"><span class="planned-badge">' + ICON_CALENDAR + esc(formatDate(g.plannedDate)) + '</span><button type="button" class="plan-btn" data-id="' + g.id + '" data-cur="' + esc(g.plannedDate) + '">wijzigen</button><button type="button" class="plan-btn" data-id="' + g.id + '" data-clear="1">verwijderen</button></div>'
+      : '<div class="planned-row"><button type="button" class="plan-btn" data-id="' + g.id + '" data-cur="">+ speeldatum plannen</button></div>';
+    var rulesBtn = '<button class="rules-known-btn' + (st.rulesKnownByMe ? ' known' : '') + '" data-id="' + g.id + '">' + ICON_CHECK + '<span>' + st.rulesKnownCount + '</span><span class="rules-known-label">' + (st.rulesKnownByMe ? 'Regels gekend' : 'Regels gekend?') + '</span></button>';
+    return (
+      '<article class="card vn-card' + (g.archived ? ' archived' : '') + '" data-id="' + g.id + '">' +
+        '<div class="vn-card-main">' + rankBtns + coverHTML(g.imageUrl, g.title, 'vn-card-cover') +
+          '<div class="vn-card-body"><h3 class="card-title">' + esc(g.title) + '</h3>' +
+            (g.archived ? '<span class="archived-label">gearchiveerd</span>' : '') +
+            (meta ? '<div class="vn-card-meta">' + meta + '</div>' : '') +
+            (g._owners && g._owners.length ? '<div class="vn-card-box">📦 ' + esc(listNames(g._owners, 'of')) + '</div>' : '') +
+            (g.plannedDate ? '<span class="planned-badge" style="margin-top:0.3rem;">' + ICON_CALENDAR + esc(formatDate(g.plannedDate)) + '</span>' : '') +
+          '</div>' +
+        '</div>' +
+        '<div class="vn-card-bar">' +
+          '<button class="vote-btn' + (st.votedByMe ? ' voted' : '') + '" data-id="' + g.id + '">' + ICON_STAR + '<span>' + vi.n + '</span><span class="vote-label">' + (st.votedByMe ? 'Gestemd' : 'Stem') + '</span></button>' +
+          '<span class="vn-avs">' + avatarsHTML(vi.people) + '</span>' +
+          '<button class="expand-btn" data-id="' + g.id + '" aria-expanded="' + open + '">Meer' + (open ? ICON_CHEV.replace('class="chev"', 'class="chev" style="transform:rotate(180deg)"') : ICON_CHEV) + '</button>' +
+        '</div>' +
+        '<div class="panel" id="panel-' + g.id + '"' + (open ? '' : ' hidden') + '>' +
+          (g.notes ? '<p class="notes" style="margin:0 0 0.6rem;">' + esc(g.notes) + '</p>' : '') +
+          '<div class="vn-card-tools">' + rulesBtn + '<span class="vn-tools-right">' + toolButtonsHTML(g) + '</span></div>' +
+          (know.length ? '<div class="vn-card-line">📖 ' + esc(listNames(know)) + (know.length === 1 ? ' kent' : ' kennen') + ' de regels</div>' : '') +
+          plannedRow +
+          '<div class="added-by">' + (g.addedBy ? 'toegevoegd door ' + esc(personOf(g.addedBy) || g.addedBy) : '') + (st.playCount ? ' · ' + st.playCount + '× gespeeld' : '') + '</div>' +
+          '<h4 class="vn-sub">Potje loggen</h4>' + playFormHTML(g.id) +
+        '</div>' +
+      '</article>'
+    );
+  }
+
+  function render() {
+    var nonArchived = games.filter(function (g) { return !g.archived; });
+    surpriseBtn.hidden = !nonArchived.length;
+    var ac = archivedCount();
+    archiveToggleBtn.textContent = showArchived ? 'Verberg gearchiveerde spellen' : 'Toon gearchiveerde spellen' + (ac ? ' (' + ac + ')' : '');
+    archiveToggleBtn.hidden = !ac && !showArchived;
+    statusLine.hidden = true;
+    if (!games.length) {
+      gameList.innerHTML = '<div class="empty-state">' + ICON_EMPTY + '<div>De plank is angstaanjagend leeg. 😱<br>Vul \'m met jullie eerste spel via de <strong>+</strong> knop.</div></div>';
+      document.getElementById('vnSpChips').innerHTML = '';
+      renderPlanned();
+      return;
+    }
+    var fullSorted = sortedGames(), idxMap = {};
+    fullSorted.forEach(function (g, i) { idxMap[g.id] = i; });
+    var query = (searchInput.value || '').trim().toLowerCase(), playersVal = playersFilterEl.value;
+    var todoCount = 0;
+    var list = (showArchived ? games : nonArchived).filter(function (g) {
+      var st = statsMap[g.id];
+      // gespeelde spellen staan bij "Gespeeld", behalve wanneer ze terug op de lijst gezet zijn
+      if (!showArchived && st && st.playCount > 0 && !g.replay) return false;
+      if (query && !titleOrAdderMatches(g, query)) return false;
+      if (!matchesPlayersFilter(g, playersVal)) return false;
+      var mine = st && st.votedByMe;
+      if (!mine) todoCount++;
+      return !(spState.todo && mine);
+    });
+    var votesOf = function (g) { return voteInfo(statsMap[g.id] || EMPTY_STATS).n; };
+    list.sort(spState.sort === 'votes' ? function (a, b) { return votesOf(b) - votesOf(a) || idxMap[a.id] - idxMap[b.id]; }
+      : spState.sort === 'new' ? function (a, b) { return (b.addedAt || 0) - (a.addedAt || 0); }
+      : spState.sort === 'az' ? function (a, b) { return (a.title || '').localeCompare(b.title || '', 'nl'); }
+      : function (a, b) { return idxMap[a.id] - idxMap[b.id]; });
+    document.getElementById('vnSpChips').innerHTML = (todoCount || spState.todo) ? chip('Nog niet gestemd · ' + todoCount, spState.todo, 'data-todo="1"') : '';
+    if (!list.length) {
+      gameList.innerHTML = '<p class="no-results">' +
+        (query ? 'Niks gevonden. Zelfs het rad kan dit niet oplossen. 🤷'
+          : spState.todo ? 'Je hebt overal op gestemd. 🎉'
+          : 'Alles hier is al gespeeld — kijk bij "Gespeeld", of voeg een nieuw spel toe. 🎉') + '</p>';
+    } else {
+      gameList.innerHTML = list.map(function (g) { return gameCardHTML(g, idxMap[g.id], fullSorted.length); }).join('');
+    }
+    renderPlanned();
+    if (!document.getElementById('playedView').hidden) renderPlayed();
+  }
+
+  // --- Gespeeld: compacte rij per spel, uitklappen voor de geschiedenis ---
+  document.querySelector('#playedView .oath-intro').insertAdjacentHTML('afterend',
+    '<div class="filter-bar"><select id="vnPlSort" class="players-filter"><option value="recent">Laatst gespeeld</option><option value="most">Meest gespeeld</option><option value="az">A–Z</option></select></div>');
+  document.querySelector('#playedView .oath-sub').textContent = 'Alles wat al op tafel kwam. Tik op een spel voor de potjes, of om er nog één te loggen.';
+  document.getElementById('vnPlSort').addEventListener('change', renderPlayed);
+
+  function winnersSummary(st) {
+    var cnt = {}, coopW = 0, coopL = 0, other = [];
+    (st.winners || []).forEach(function (w) {
+      var o = outcomeOf({ winner: w.name });
+      if (o.coop === 'win') coopW += w.count;
+      else if (o.coop === 'loss') coopL += w.count;
+      else if (o.winners.length) o.winners.forEach(function (n) { cnt[n] = (cnt[n] || 0) + w.count; });
+      else if (o.raw) other.push(w.name);
+    });
+    var parts = Object.keys(cnt).sort(function (a, b) { return cnt[b] - cnt[a]; }).map(function (n) { return n + (cnt[n] > 1 ? ' ' + cnt[n] + '×' : ''); }).concat(other);
+    var out = [];
+    if (parts.length) out.push('🏆 ' + parts.join(' · '));
+    if (coopW) out.push('🤝 ' + (coopW > 1 ? coopW + '× ' : '') + 'samen gewonnen');
+    if (coopL) out.push('💀 ' + (coopL > 1 ? coopL + '× ' : '') + 'verloren van het spel');
+    return out.join(' · ') || 'Geen winnaar';
+  }
+
+  function renderPlayed() {
+    var listEl = document.getElementById('playedList');
+    if (!listEl) return;
+    var sort = document.getElementById('vnPlSort').value;
+    var played = games.filter(function (g) { var st = statsMap[g.id]; return !g.archived && st && st.playCount > 0; });
+    if (!played.length) {
+      listEl.innerHTML = '<p class="no-plays">Nog geen enkel spel gespeeld — de eerste keer is altijd het leukst. 🎉</p>';
+      return;
+    }
+    played.sort(function (a, b) {
+      var sa = statsMap[a.id], sb = statsMap[b.id];
+      if (sort === 'most' && sb.playCount !== sa.playCount) return sb.playCount - sa.playCount;
+      if (sort === 'az') return (a.title || '').localeCompare(b.title || '', 'nl');
+      return (sb.lastPlayed || '').localeCompare(sa.lastPlayed || '');
+    });
+    var needPlays = false;
+    listEl.innerHTML = played.map(function (g0) {
+      var g = withBgg(g0), st = statsMap[g.id], open = !!playedOpen[g.id], panel = '';
+      if (open) {
+        var hist;
+        if (playsCache) {
+          var mine = playsCache.filter(function (p) { return p.game.id === g.id; });
+          hist = mine.map(function (p) {
+            return '<div class="vn-hist"><span class="vn-log-date">' + esc(formatDate(p.date)) + '</span><br>' + esc(outcomeText(p.o)) +
+              (p.note ? '<div class="vn-log-note">' + esc(p.note) + '</div>' : '') + '</div>';
+          }).join('') || '<p class="no-plays" style="margin:0.5rem 0;">Geen details bewaard van deze potjes.</p>';
+        } else { needPlays = true; hist = '<p class="no-plays" style="margin:0.5rem 0;">Potjes laden…</p>'; }
+        var meta = cardMeta(g);
+        panel = '<div class="vn-prow-panel">' + hist +
+          (meta ? '<div class="vn-card-line">' + meta + (g._owners && g._owners.length ? ' · 📦 ' + esc(listNames(g._owners, 'of')) : '') + '</div>' : '') +
+          (g.notes ? '<p class="notes">' + esc(g.notes) + '</p>' : '') +
+          '<div class="vn-card-tools" style="margin-top:0.7rem;">' +
+            '<button type="button" class="vn-chip' + (g.replay ? ' on' : '') + '" data-replay="' + g.id + '">' + (g.replay ? '✓ Staat terug bij Spellen' : '↩ Opnieuw spelen?') + '</button>' +
+            '<span class="vn-tools-right">' + toolButtonsHTML(g) + '</span>' +
+          '</div>' +
+          '<details><summary>Nog een potje loggen</summary>' + playFormHTML(g.id) + '</details>' +
+        '</div>';
+      }
+      return '<div class="vn-prow' + (open ? ' open' : '') + '">' +
+        '<button type="button" class="vn-prow-head" data-toggle="' + g.id + '">' + coverHTML(g.imageUrl, g.title, 'vn-row-img') +
+          '<span class="vn-row-body"><span class="vn-row-title">' + esc(g.title) + '</span>' +
+          '<span class="vn-row-sub">' + st.playCount + '× gespeeld · laatst op ' + esc(formatDate(st.lastPlayed)) + '</span>' +
+          '<span class="vn-row-sub vn-prow-win">' + esc(winnersSummary(st)) + '</span></span>' +
+          (g.replay ? '<span class="vn-tag">opnieuw</span>' : '') + ICON_CHEV +
+        '</button>' + panel + '</div>';
+    }).join('');
+    if (needPlays && db) loadAllPlays().then(function () { if (!document.getElementById('playedView').hidden) renderPlayed(); });
+  }
+
+  document.getElementById('playedList').addEventListener('click', function (e) {
+    var t = e.target.closest('[data-toggle]');
+    if (t) { playedOpen[t.dataset.toggle] = !playedOpen[t.dataset.toggle]; renderPlayed(); return; }
+    var r = e.target.closest('[data-replay]');
+    if (r && db) {
+      var g = games.find(function (x) { return x.id === r.dataset.replay; });
+      if (!g) return;
+      g.replay = !g.replay;
+      render();
+      db.doc('games/' + g.id).update({ replay: g.replay }).catch(function () { alert('Kon dit niet opslaan. Probeer opnieuw.'); });
+    }
+  });
+  // na een nieuw potje verdwijnt "opnieuw spelen" vanzelf
+  [gameList, document.getElementById('playedList')].forEach(function (el) {
+    el.addEventListener('submit', function (e) {
+      var form = e.target;
+      if (!form.classList.contains('play-form') || !db) return;
+      var g = games.find(function (x) { return x.id === form.dataset.id; });
+      var hasWinner = form.querySelector('.vn-win .vn-chip.on') || form.querySelector('.play-winner').value.trim();
+      if (g && g.replay && hasWinner && myName) db.doc('games/' + g.id).update({ replay: false }).catch(function () {});
+    });
+  });
+
+  // --- Oath als kroniek ---
+  (function () {
+    var form = document.getElementById('oathForm'), hist = document.getElementById('oathHistory');
+    var det = document.createElement('details');
+    det.className = 'oa-log';
+    det.innerHTML = '<summary>＋ Oath-potje loggen</summary>';
+    hist.parentNode.insertBefore(det, hist);
+    det.appendChild(form);
+    form.insertAdjacentHTML('afterbegin',
+      '<span class="field-label">Wie was Chancellor?</span><div class="vn-chips" data-for="oath-chancellor" style="margin-bottom:0.7rem;">' +
+        PEOPLE.map(function (p) { return chip(p.n, false, 'data-on="' + p.n + '"', p.c); }).join('') + '</div>' +
+      '<span class="field-label">Wie won?</span><div class="vn-chips" data-for="oath-winner" style="margin-bottom:0.8rem;">' +
+        PEOPLE.map(function (p) { return chip(p.n, false, 'data-on="' + p.n + '"', p.c); }).join('') + '</div>');
+    form.addEventListener('click', function (e) {
+      var c = e.target.closest('.vn-chip[data-on]');
+      if (!c) return;
+      var was = c.classList.contains('on');
+      Array.prototype.forEach.call(c.parentNode.querySelectorAll('.vn-chip'), function (o) { o.classList.remove('on'); });
+      if (!was) c.classList.add('on');
+      document.getElementById(c.parentNode.getAttribute('data-for')).value = was ? '' : c.getAttribute('data-on');
+    });
+    form.addEventListener('reset', function () {
+      Array.prototype.forEach.call(form.querySelectorAll('.vn-chip.on'), function (o) { o.classList.remove('on'); });
+    });
+    document.querySelector('#oathView .oath-sub').textContent = 'Wie zit op de troon, wie stootte wie eraf. De kroniek van jullie Oath-potjes.';
+  })();
+
+  function renderOath() {
+    var tallyEl = document.getElementById('oathTally'), histEl = document.getElementById('oathHistory');
+    var ob = bggIndex().t.oath, cover = ob && ob.th ? IMG + ob.th : '';
+    var bg = cover ? '<div class="vn-hero-bg" style="background-image:url(&quot;' + esc(cover) + '&quot;)"></div>' : '';
+    var asc = oathEntries.slice().sort(function (a, b) { return (a.date || '').localeCompare(b.date || '') || (a.at || 0) - (b.at || 0); });
+    if (!asc.length) {
+      tallyEl.innerHTML = '<div class="oa-hero">' + bg + '<div class="oa-hero-in"><div class="vn-kicker oa-kicker">DE TROON IS LEEG</div><span class="oa-crown">👑</span><div class="oa-sub">Log het eerste potje en de kroniek begint.</div></div></div>';
+      histEl.innerHTML = '';
+      return;
+    }
+    var who = function (s) { return personOf(s) || (s || '').trim(); };
+    var chCount = {}, winCount = {}, best = { n: '', len: 0 }, run = { n: '', len: 0 };
+    asc.forEach(function (en) {
+      var w = who(en.winner), c = who(en.chancellor);
+      if (c) chCount[c] = (chCount[c] || 0) + 1;
+      if (w) winCount[w] = (winCount[w] || 0) + 1;
+      run = (w && w === run.n) ? { n: w, len: run.len + 1 } : { n: w, len: 1 };
+      if (run.len > best.len) best = run;
+    });
+    var last = asc[asc.length - 1], ruler = who(last.winner) || '?', held = who(last.chancellor) === ruler;
+    var days = Math.max(0, Math.floor((Date.now() - new Date(last.date).getTime()) / 864e5));
+    var ago = days === 0 ? 'vandaag' : days === 1 ? 'gisteren' : days + ' dagen geleden';
+    var html = '<div class="oa-hero">' + bg + '<div class="oa-hero-in">' +
+      '<div class="vn-kicker oa-kicker">OP DE TROON</div><span class="oa-crown">👑</span>' +
+      '<div class="oa-ruler">' + esc(ruler) + '</div>' +
+      '<div class="oa-sub">' + (held ? 'Hield de troon op ' : 'Greep de macht op ') + esc(formatDate(last.date)) + ' · ' + ago + '</div>' +
+      '<div class="oa-sub">Het volgende potje begint ' + esc(ruler) + ' als Chancellor.</div>' +
+    '</div></div>';
+    html += '<div class="oa-grid">' + PEOPLE.map(function (p) {
+      return '<div class="oa-p" style="--pc:' + p.c + '"><strong>' + esc(p.n) + '</strong>👑 ' + (chCount[p.n] || 0) + '× Chancellor<br>🏆 ' + (winCount[p.n] || 0) + '× gewonnen</div>';
+    }).join('') + '</div>';
+    if (best.len >= 2) html += '<div class="vn-fact">Langste heerschappij: <strong>' + esc(best.n) + '</strong>, ' + best.len + ' potjes op rij.</div>';
+    tallyEl.innerHTML = html;
+    histEl.innerHTML = '<h3 class="vn-h" style="margin-top:0;">Kroniek · ' + asc.length + (asc.length === 1 ? ' potje' : ' potjes') + '</h3><div class="oa-tl">' + asc.slice().reverse().map(function (en) {
+      var w = who(en.winner) || '?', c = who(en.chancellor), kept = c && c === w;
+      var head = kept ? '👑 <strong>' + esc(w) + '</strong> houdt de troon'
+        : c ? '⚔️ <strong>' + esc(w) + '</strong> stoot ' + esc(c) + ' van de troon'
+        : '🏆 <strong>' + esc(w) + '</strong> won';
+      return '<div class="oa-ev' + (kept ? '' : ' coup') + '"><div class="oa-date">' + esc(formatDate(en.date)) + '</div><div class="oa-head">' + head + '</div>' +
+        (en.note ? '<div class="vn-log-note">' + esc(en.note) + '</div>' : '') + '</div>';
+    }).join('') + '</div>';
+    // de heerser begint het volgende potje als Chancellor: alvast invullen
+    var ci = document.getElementById('oath-chancellor');
+    if (ci && !ci.value && personOf(ruler) === ruler) {
+      ci.value = ruler;
+      var cc = document.querySelector('#oathForm [data-for="oath-chancellor"] [data-on="' + ruler + '"]');
+      if (cc) cc.classList.add('on');
+    }
   }
 
   // --- boot ---
