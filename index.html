@@ -790,6 +790,26 @@
   .oa-ev.coup::before { background: var(--red); box-shadow: 0 0 12px var(--red); }
   .oa-date { font-size: 0.72rem; color: var(--ink-faint); }
   .oa-head { font-size: 0.92rem; line-height: 1.45; }
+
+  /* ===== v4: Duel, plank voor 2 spelers ===== */
+  .du-top { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 0.9rem; }
+  .du-count { font-size: 0.78rem; color: var(--ink-faint); margin: 0 0 0.5rem; }
+  .du-row { display: flex; gap: 0.7rem; align-items: center; background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 0.55rem 0.7rem; }
+  .du-row.open { border-color: var(--accent); }
+  .du-row.done { opacity: 0.85; }
+  .du-row-head { display: flex; gap: 0.7rem; align-items: center; width: 100%; min-width: 0; background: none; border: 0; padding: 0; font: inherit; color: inherit; text-align: left; cursor: pointer; }
+  .du-row-head .chev { width: 14px; height: 14px; margin-left: auto; flex: none; color: var(--ink-faint); transition: transform 0.15s ease; }
+  .du-row.open .chev { transform: rotate(180deg); }
+  .du-wrap { display: flex; flex-direction: column; gap: 0.5rem; }
+  .du-panel { padding: 0.5rem 0.2rem 0.2rem; }
+  .du-pick-list { display: flex; flex-direction: column; gap: 0.4rem; max-height: 50vh; overflow-y: auto; margin-top: 0.6rem; }
+  .du-pick { display: flex; gap: 0.6rem; align-items: center; background: var(--surface-2); border: 1px solid var(--border); border-radius: 12px; padding: 0.45rem 0.6rem; font: inherit; color: inherit; text-align: left; cursor: pointer; width: 100%; }
+  .du-pick:hover { border-color: var(--accent); }
+  .du-pick.is-added { opacity: 0.5; cursor: default; }
+  .du-pick-img { flex: none; width: 40px; height: 40px; border-radius: 8px; object-fit: cover; }
+  .du-pick-img.vn-ph { font-size: 0.5rem; }
+  .du-empty { background: var(--surface); border: 1px dashed var(--border); border-radius: 14px; padding: 1rem; font-size: 0.85rem; color: var(--ink-dim); text-align: center; }
+  .du-hint { font-size: 0.74rem; color: var(--ink-faint); margin: 0.3rem 0 1.5rem; }
 </style>
 </head>
 <body>
@@ -808,6 +828,7 @@
       <button class="tab" data-tab="tonight" role="tab" aria-selected="false">🌙 Vanavond</button>
       <button class="tab" data-tab="played" role="tab" aria-selected="false">✅ Gespeeld</button>
       <button class="tab" data-tab="board" role="tab" aria-selected="false">🏆 Topscore</button>
+      <button class="tab" data-tab="duo" role="tab" aria-selected="false">⚔️ Duel</button>
       <button class="tab" data-tab="oath" role="tab" aria-selected="false">🗡️ Oath</button>
       <button class="tab" data-tab="planned" role="tab" aria-selected="false">📅 Gepland</button>
       <button class="tab" data-tab="collection" role="tab" aria-selected="false">📚 Collectie</button>
@@ -876,6 +897,14 @@
       <p class="oath-sub">Korte uitleg bij elk onderdeel van de app.</p>
     </div>
     <div class="manual">
+      <section class="manual-block">
+        <h3>⚔️ Duel</h3>
+        <ul>
+          <li>Aparte plank voor avonden met twee spelers. Kies uit de collectie; standaard enkel spellen voor precies 2.</li>
+          <li>Open een spel om een duel te loggen: wie speelde, wie won. Daarna staat het bij "Al gespeeld" met de stand.</li>
+          <li>"Terug naar te spelen" zet een spel opnieuw bovenaan de lijst.</li>
+        </ul>
+      </section>
       <section class="manual-block">
         <h3>🌙 Vanavond</h3>
         <ul>
@@ -959,6 +988,34 @@
     <div id="vnResult"></div>
   </main>
   <div id="vnSheet" class="sheet" hidden><div class="sheet-inner" id="vnSheetInner"></div></div>
+
+  <main id="duoView" hidden>
+    <div class="oath-intro">
+      <h2>Duel</h2>
+      <p class="oath-sub">Een aparte plank voor avonden met twee. Wat kunnen we nog spelen, en wat hebben we al gedaan.</p>
+    </div>
+    <div class="du-top">
+      <button type="button" class="btn btn-primary" id="duAddBtn">+ Spel op de duelplank</button>
+      <select id="duSort" class="players-filter"><option value="new">Laatst toegevoegd</option><option value="az">A–Z</option><option value="short">Kortste eerst</option><option value="rating">Hoogste BGG-score</option></select>
+    </div>
+    <p id="duStatus" class="du-count">Bezig met laden…</p>
+    <h3 class="vn-h" style="margin-top:0.4rem;">Nog te spelen</h3>
+    <div id="duTodo" class="du-wrap"></div>
+    <h3 class="vn-h">Al gespeeld</h3>
+    <div id="duDone" class="du-wrap"></div>
+    <p class="du-hint">Een spel verhuist naar "Al gespeeld" zodra er een duel voor gelogd is.</p>
+  </main>
+  <div id="duPickSheet" class="sheet" hidden>
+    <div class="sheet-inner">
+      <h2>Spel op de duelplank</h2>
+      <input id="duPickSearch" type="search" class="search-input" style="width:100%;" placeholder="Zoek in de collectie…" autocomplete="off" />
+      <div class="vn-chips" style="margin-top:0.6rem;">
+        <button type="button" class="vn-chip on" id="duPickStrict">Alleen echte 2-spelerspellen</button>
+      </div>
+      <div id="duPickList" class="du-pick-list"></div>
+      <div class="sheet-actions"><button type="button" class="btn btn-ghost" id="duPickClose">Sluiten</button></div>
+    </div>
+  </div>
 
   <main id="oathView" hidden>
     <div class="oath-intro">
@@ -1810,6 +1867,8 @@
       document.getElementById('collectionView').hidden = tab !== 'collection';
       document.getElementById('wouterView').hidden = tab !== 'wouter';
       document.getElementById('tonightView').hidden = tab !== 'tonight';
+      document.getElementById('duoView').hidden = tab !== 'duo';
+      if (tab === 'duo') { subscribeDuo(); renderDuo(); }
       if (tab === 'tonight') renderTonight();
       if (tab === 'games') {
         rollSurpriseCopy();
@@ -3647,6 +3706,154 @@
     }
   }
 
+
+  // ===== v4: Duel, aparte plank voor 2 spelers (eigen collectie "duoGames") =====
+  var duoGames = [], duoLoaded = false, duoOpen = {};
+  var duView = document.getElementById('duoView'), duTodo = document.getElementById('duTodo'), duDone = document.getElementById('duDone'), duStatus = document.getElementById('duStatus');
+  var duPickSheet = document.getElementById('duPickSheet'), duPickList = document.getElementById('duPickList'), duPickSearch = document.getElementById('duPickSearch'), duPickStrict = document.getElementById('duPickStrict');
+
+  function duoBgg(d) { return (d.bggId && bggIndex().id[d.bggId]) || bggIndex().t[normTitle(d.title)] || null; }
+  function duoThumb(d) { var b = duoBgg(d); return b && b.th ? IMG + b.th : ''; }
+  function duoPlays(d) { return (d.plays || []).slice().sort(function (a, b) { return (b.date || '').localeCompare(a.date || ''); }); }
+  function duoHasBgg(id) { return duoGames.some(function (d) { return d.bggId === id; }); }
+
+  function subscribeDuo() {
+    if (!db || duoLoaded) return;
+    duoLoaded = true;
+    db.collection('duoGames').orderBy('addedAt', 'desc').limit(300).onSnapshot(function (snap) {
+      duoGames = snap.docs.map(function (x) { return Object.assign({ id: x.id }, x.data()); });
+      renderDuo();
+    }, function () { duStatus.textContent = 'Kon de duelplank niet laden.'; });
+  }
+
+  function duoRowHTML(d) {
+    var b = duoBgg(d), plays = duoPlays(d), open = !!duoOpen[d.id];
+    var sub = [];
+    if (b) { var ml = metaLine(b); if (ml) sub.push(ml); }
+    if (b) { var ow = ownerNames(b); if (ow.length) sub.push('📦 ' + listNames(ow, 'of')); }
+    var score = {};
+    plays.forEach(function (p) { (p.winners || []).forEach(function (n) { score[n] = (score[n] || 0) + 1; }); });
+    var scoreTxt = plays.length ? Object.keys(score).sort(function (a, c) { return score[c] - score[a]; }).map(function (n) { return n + ' ' + score[n]; }).join(' – ') : '';
+    var head = '<button type="button" class="du-row-head" data-du-toggle="' + d.id + '">' + coverHTML(duoThumb(d), d.title, 'vn-row-img') +
+      '<span class="vn-row-body"><span class="vn-row-title">' + esc(d.title) + '</span>' +
+      (sub.length ? '<span class="vn-row-sub">' + esc(sub.join(' · ')) + '</span>' : '') +
+      (plays.length ? '<span class="vn-row-sub vn-prow-win">' + plays.length + (plays.length === 1 ? ' duel' : ' duels') + (scoreTxt ? ' · 🏆 ' + esc(scoreTxt) : '') + ' · laatst ' + esc(formatDate(plays[0].date)) + '</span>' : '') +
+      '</span>' + ICON_CHEV + '</button>';
+    var panel = '';
+    if (open) {
+      panel = '<div class="du-panel">' +
+        (plays.length ? plays.map(function (p) {
+          var who = (p.players || []).length ? listNames(p.players) : '';
+          return '<div class="vn-hist"><span class="vn-log-date">' + esc(formatDate(p.date)) + (who ? ' · ' + esc(who) : '') + '</span><br>' +
+            ((p.winners || []).length ? '🏆 ' + esc(listNames(p.winners)) + ' won' : '🤝 Gelijkspel of samen') +
+            (p.note ? '<div class="vn-log-note">' + esc(p.note) + '</div>' : '') + '</div>';
+        }).join('') : '') +
+        '<h4 class="vn-sub">Duel loggen</h4>' +
+        '<form class="play-form du-form" data-id="' + d.id + '">' +
+          '<span class="field-label">Wie speelde?</span><div class="vn-chips du-pl">' + PEOPLE.map(function (p) { return chip(p.n, false, 'data-p="' + p.n + '"', p.c); }).join('') + '</div>' +
+          '<span class="field-label" style="margin-top:0.5rem;">Wie won?</span><div class="vn-chips du-win">' + PEOPLE.map(function (p) { return chip(p.n, false, 'data-w="' + p.n + '"', p.c); }).join('') + chip('🤝 Gelijk / samen', false, 'data-w="draw"') + '</div>' +
+          '<div class="play-form-row" style="margin-top:0.5rem;"><label><span class="field-label">Datum</span><input type="date" class="play-date" value="' + todayStr() + '" /></label>' +
+          '<label><span class="field-label">Notitie</span><input class="play-note" placeholder="optioneel" /></label></div>' +
+          '<button type="submit" class="btn btn-primary">Duel opslaan</button>' +
+        '</form>' +
+        '<div class="vn-card-tools" style="margin-top:0.8rem;">' +
+          (plays.length ? '<button type="button" class="vn-chip" data-du-reset="' + d.id + '">↩ Terug naar te spelen</button>' : '') +
+          '<span class="vn-tools-right">' +
+            (b && b.id ? '<a class="icon-btn bgg-link" href="https://boardgamegeek.com/boardgame/' + esc(b.id) + '" target="_blank" rel="noopener" aria-label="BGG-pagina">' + ICON_DICE + '</a>' : '') +
+            '<button class="icon-btn" data-du-del="' + d.id + '" aria-label="Van de duelplank halen">' + ICON_TRASH + '</button>' +
+          '</span></div>' +
+        '<div class="added-by">' + (d.addedBy ? 'toegevoegd door ' + esc(personOf(d.addedBy) || d.addedBy) : '') + '</div>' +
+      '</div>';
+    }
+    return '<div class="du-row' + (open ? ' open' : '') + (plays.length && !d.again ? ' done' : '') + '"><div style="flex:1;min-width:0;">' + head + panel + '</div></div>';
+  }
+
+  function renderDuo() {
+    if (duView.hidden) return;
+    var sort = document.getElementById('duSort').value;
+    var list = duoGames.slice();
+    var by = function (f, dir) { return function (a, c) { var x = f(a), y = f(c); if (x == null && y == null) return 0; if (x == null) return 1; if (y == null) return -1; return (x - y) * dir; }; };
+    if (sort === 'az') list.sort(function (a, c) { return a.title.localeCompare(c.title, 'nl'); });
+    else if (sort === 'short') list.sort(by(function (d) { var b = duoBgg(d); return b ? (b.maxT || b.minT) : null; }, 1));
+    else if (sort === 'rating') list.sort(by(function (d) { var b = duoBgg(d); return b ? b.rating : null; }, -1));
+    var todo = list.filter(function (d) { return !(d.plays || []).length || d.again; });
+    var done = list.filter(function (d) { return (d.plays || []).length && !d.again; });
+    duStatus.textContent = duoGames.length ? duoGames.length + ' spellen op de duelplank · ' + todo.length + ' nog te spelen' : '';
+    duTodo.innerHTML = todo.length ? todo.map(duoRowHTML).join('') : '<div class="du-empty">' + (duoGames.length ? 'Alles gespeeld. Zet er nieuwe bij, of haal er één terug.' : 'Nog leeg. Zet er een spel op via de knop hierboven.') + '</div>';
+    duDone.innerHTML = done.length ? done.map(duoRowHTML).join('') : '<div class="du-empty">Nog geen duel gelogd.</div>';
+  }
+  document.getElementById('duSort').addEventListener('change', renderDuo);
+
+  duView.addEventListener('click', function (e) {
+    var t = e.target.closest('[data-du-toggle]');
+    if (t) { duoOpen[t.dataset.duToggle] = !duoOpen[t.dataset.duToggle]; renderDuo(); return; }
+    var c = e.target.closest('.du-form .vn-chip');
+    if (c) {
+      c.classList.toggle('on');
+      if (c.dataset.w && c.classList.contains('on')) {
+        Array.prototype.forEach.call(c.parentNode.querySelectorAll('.vn-chip.on'), function (o) { if (o !== c) o.classList.remove('on'); });
+        if (c.dataset.w !== 'draw') { // de winnaar speelde zeker mee
+          var pl = c.closest('.du-form').querySelector('.du-pl [data-p="' + c.dataset.w + '"]');
+          if (pl) pl.classList.add('on');
+        }
+      }
+      return;
+    }
+    var r = e.target.closest('[data-du-reset]');
+    if (r && db) { db.doc('duoGames/' + r.dataset.duReset).update({ again: true }).catch(function () { alert('Kon dit niet opslaan.'); }); return; }
+    var del = e.target.closest('[data-du-del]');
+    if (del && db && confirm('Dit spel van de duelplank halen? De gelogde duels gaan mee weg.')) {
+      db.doc('duoGames/' + del.dataset.duDel).delete().catch(function () { alert('Kon dit niet verwijderen.'); });
+    }
+  });
+  duView.addEventListener('submit', function (e) {
+    var form = e.target;
+    if (!form.classList.contains('du-form')) return;
+    e.preventDefault();
+    var players = Array.prototype.map.call(form.querySelectorAll('.du-pl .vn-chip.on'), function (c) { return c.dataset.p; });
+    var w = form.querySelector('.du-win .vn-chip.on');
+    if (!w) { alert('Duid aan wie won.'); return; }
+    var play = { date: form.querySelector('.play-date').value || todayStr(), players: players, winners: w.dataset.w === 'draw' ? [] : [w.dataset.w], note: form.querySelector('.play-note').value.trim(), at: Date.now() };
+    ensureName(function () {
+      if (!db) return;
+      play.loggedBy = myName;
+      db.doc('duoGames/' + form.dataset.id).update({ plays: firebase.firestore.FieldValue.arrayUnion(play), again: false, lastPlayed: play.date }).catch(function () { alert('Kon duel niet opslaan. Probeer opnieuw.'); });
+    });
+  });
+
+  // --- kiezen uit de collectie ---
+  function renderDuoPick() {
+    var q = normTitle(duPickSearch.value), strict = duPickStrict.classList.contains('on');
+    var rows = BGG_GAMES.filter(function (b) {
+      if (!b.minPlayers || b.minPlayers > 2) return false;
+      var mx = b.maxPlayers || b.minPlayers;
+      if (mx < 2) return false;
+      if (strict && mx !== 2) return false;
+      return !q || b.title.toLowerCase().indexOf(q) !== -1;
+    });
+    duPickList.innerHTML = rows.length ? rows.map(function (b) {
+      var added = duoHasBgg(b.id);
+      return '<button type="button" class="du-pick' + (added ? ' is-added' : '') + '" data-bgg="' + esc(b.id) + '"' + (added ? ' disabled' : '') + '>' + coverHTML(b.th ? IMG + b.th : '', b.title, 'du-pick-img') +
+        '<span class="vn-row-body"><span class="vn-row-title">' + esc(b.title) + '</span><span class="vn-row-sub">' + esc(metaLine(b)) + ' · 📦 ' + esc(ownerNames(b).join(', ')) + (added ? ' · al op de duelplank' : '') + '</span></span></button>';
+    }).join('') : '<p class="no-plays">Niets gevonden.</p>';
+  }
+  document.getElementById('duAddBtn').addEventListener('click', function () {
+    ensureName(function () { duPickSearch.value = ''; renderDuoPick(); duPickSheet.hidden = false; duPickSearch.focus(); });
+  });
+  document.getElementById('duPickClose').addEventListener('click', function () { duPickSheet.hidden = true; });
+  duPickSheet.addEventListener('click', function (e) { if (e.target === duPickSheet) duPickSheet.hidden = true; });
+  duPickSearch.addEventListener('input', renderDuoPick);
+  duPickStrict.addEventListener('click', function () { duPickStrict.classList.toggle('on'); renderDuoPick(); });
+  duPickList.addEventListener('click', function (e) {
+    var btn = e.target.closest('.du-pick[data-bgg]');
+    if (!btn || btn.disabled || !db) return;
+    var b = bggIndex().id[btn.dataset.bgg];
+    if (!b || duoHasBgg(b.id)) return;
+    btn.disabled = true;
+    db.collection('duoGames').add({ bggId: b.id, title: b.title, addedBy: myName, addedAt: Date.now(), plays: [], again: false }).then(function () {
+      duPickSheet.hidden = true;
+    }).catch(function () { btn.disabled = false; alert('Kon spel niet toevoegen.'); });
+  });
   // --- boot ---
   var firebaseConfig = {
     apiKey: "AIzaSyAWfGcuCMlv7edFGrpcf57QWOiX0DHfx14",
