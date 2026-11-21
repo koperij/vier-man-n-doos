@@ -810,6 +810,53 @@
   .du-pick-img.vn-ph { font-size: 0.5rem; }
   .du-empty { background: var(--surface); border: 1px dashed var(--border); border-radius: 14px; padding: 1rem; font-size: 0.85rem; color: var(--ink-dim); text-align: center; }
   .du-hint { font-size: 0.74rem; color: var(--ink-faint); margin: 0.3rem 0 1.5rem; }
+
+  /* ===== v5: Weekend, agenda + kandidatenpoel ===== */
+  .wk-date-row { display: flex; gap: 0.6rem; align-items: center; flex-wrap: wrap; margin: 0 0 0.4rem; }
+  .wk-date-row label { font-size: 0.78rem; color: var(--ink-dim); display: flex; gap: 0.5rem; align-items: center; }
+  .wk-date-row input[type=date] { font: inherit; font-size: 0.85rem; padding: 0.35rem 0.5rem; background: var(--surface-2); color: var(--ink); border: 1px solid var(--border); border-radius: 10px; }
+  .wk-status { font-size: 0.78rem; color: var(--ink-faint); margin: 0 0 0.9rem; }
+  .wk-top { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 0.7rem; }
+  .wk-list { display: flex; flex-direction: column; gap: 0.5rem; }
+  .wk-card { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 0.55rem 0.7rem; display: flex; flex-direction: column; gap: 0.45rem; }
+  .wk-card.top { border-color: var(--accent); }
+  .wk-card-head { display: flex; gap: 0.7rem; align-items: center; }
+  .wk-card-foot { display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap; }
+  .wk-card-foot .vn-av { flex: none; }
+  .wk-names { font-size: 0.74rem; color: var(--ink-faint); }
+  .wk-vote { margin-left: auto; flex: none; font: inherit; font-size: 0.8rem; padding: 0.4rem 0.7rem; border-radius: 999px; background: var(--surface-2); color: var(--ink); border: 1px solid var(--border); cursor: pointer; min-width: 3.4rem; }
+  .wk-vote.on { background: var(--accent-soft); border-color: var(--accent); }
+  .wk-tools { margin-left: auto; display: flex; gap: 0.4rem; align-items: center; }
+  .wk-sel { font: inherit; font-size: 0.78rem; padding: 0.3rem 0.4rem; background: var(--surface-2); color: var(--ink); border: 1px solid var(--border); border-radius: 10px; max-width: 11rem; }
+  .wk-tag { font-size: 0.68rem; padding: 0.1rem 0.45rem; border-radius: 999px; border: 1px solid var(--border); color: var(--ink-dim); }
+  .wk-tag.warn { border-color: #FFC857; color: #FFC857; }
+  .wk-tag.plan { border-color: var(--accent); color: var(--ink); }
+  .wk-day { margin-top: 0.4rem; }
+  .wk-day-date { font-weight: 400; color: var(--ink-faint); margin-left: 0.4rem; }
+  .wk-slot { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 0.55rem 0.7rem 0.7rem; margin-bottom: 0.6rem; }
+  .wk-slot-h { display: flex; gap: 0.5rem; align-items: baseline; margin-bottom: 0.45rem; }
+  .wk-slot-h b { font-size: 0.85rem; }
+  .wk-slot-h i { font-style: normal; font-size: 0.74rem; color: var(--ink-faint); }
+  .wk-slot-sum { margin-left: auto; font-size: 0.74rem; color: var(--ink-dim); }
+  .wk-entry { background: var(--surface-2); border: 1px solid var(--border); border-radius: 12px; padding: 0.4rem 0.5rem; margin-bottom: 0.4rem; }
+  .wk-entry-head { display: flex; gap: 0.6rem; align-items: center; }
+  .wk-entry.done .vn-row-title { text-decoration: line-through; opacity: 0.6; }
+  .wk-entry-main { display: flex; gap: 0.6rem; align-items: center; flex: 1; min-width: 0; background: none; border: 0; padding: 0; font: inherit; color: inherit; text-align: left; cursor: pointer; }
+  .wk-entry-main .chev { width: 14px; height: 14px; margin-left: auto; flex: none; color: var(--ink-faint); transition: transform 0.15s ease; }
+  .wk-entry.open .chev { transform: rotate(180deg); }
+  .wk-check { flex: none; width: 1.7rem; height: 1.7rem; border-radius: 8px; border: 1px solid var(--border); background: var(--surface); color: transparent; cursor: pointer; font: inherit; line-height: 1; }
+  .wk-check.on { background: var(--accent-soft); border-color: var(--accent); color: var(--ink); }
+  .wk-entry .vn-row-img { width: 38px; height: 38px; border-radius: 8px; }
+  .wk-panel { display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: center; padding: 0.55rem 0.1rem 0.15rem; }
+  .wk-panel input[type=time], .wk-panel input[type=text] { font: inherit; font-size: 0.8rem; padding: 0.3rem 0.45rem; background: var(--surface); color: var(--ink); border: 1px solid var(--border); border-radius: 10px; }
+  .wk-panel input[type=text] { flex: 1; min-width: 8rem; }
+  .wk-empty { background: var(--surface); border: 1px dashed var(--border); border-radius: 14px; padding: 0.9rem; font-size: 0.84rem; color: var(--ink-dim); text-align: center; }
+  .wk-pick-list { display: flex; flex-direction: column; gap: 0.4rem; max-height: 50vh; overflow-y: auto; margin-top: 0.6rem; }
+  .wk-pick { display: flex; gap: 0.6rem; align-items: center; background: var(--surface-2); border: 1px solid var(--border); border-radius: 12px; padding: 0.45rem 0.6rem; font: inherit; color: inherit; text-align: left; cursor: pointer; width: 100%; }
+  .wk-pick:hover { border-color: var(--accent); }
+  .wk-pick.is-added { opacity: 0.5; cursor: default; }
+  .wk-pick-img { flex: none; width: 40px; height: 40px; border-radius: 8px; object-fit: cover; }
+  .wk-pick-img.vn-ph { font-size: 0.5rem; }
 </style>
 </head>
 <body>
@@ -828,6 +875,7 @@
       <button class="tab" data-tab="tonight" role="tab" aria-selected="false">🌙 Vanavond</button>
       <button class="tab" data-tab="played" role="tab" aria-selected="false">✅ Gespeeld</button>
       <button class="tab" data-tab="board" role="tab" aria-selected="false">🏆 Topscore</button>
+      <button class="tab" data-tab="wk" role="tab" aria-selected="false">🏕️ Weekend</button>
       <button class="tab" data-tab="duo" role="tab" aria-selected="false">⚔️ Duel</button>
       <button class="tab" data-tab="oath" role="tab" aria-selected="false">🗡️ Oath</button>
       <button class="tab" data-tab="planned" role="tab" aria-selected="false">📅 Gepland</button>
@@ -897,6 +945,15 @@
       <p class="oath-sub">Korte uitleg bij elk onderdeel van de app.</p>
     </div>
     <div class="manual">
+      <section class="manual-block">
+        <h3>🏕️ Weekend</h3>
+        <ul>
+          <li>Kandidaten: zet spellen uit de collectie in de poel en stem met de duim. Wie het meeste stemmen heeft, staat bovenaan.</li>
+          <li>Agenda: vrijdagnamiddag tot zondagavond in blokken. Plan een kandidaat in via het keuzemenu, of voeg zelf een spel of een eigen item toe (bv. pizza).</li>
+          <li>Open een item voor een uur, een notitie of om het naar een ander blok te verplaatsen. Het vinkje markeert wat gespeeld is.</li>
+        </ul>
+      </section>
+
       <section class="manual-block">
         <h3>⚔️ Duel</h3>
         <ul>
@@ -988,6 +1045,37 @@
     <div id="vnResult"></div>
   </main>
   <div id="vnSheet" class="sheet" hidden><div class="sheet-inner" id="vnSheetInner"></div></div>
+
+  <main id="wkView" hidden>
+    <div class="oath-intro">
+      <h2>Spellenweekend</h2>
+      <p class="oath-sub">Van vrijdagmiddag tot zondagavond. Stel een poel van kandidaten samen, stem, en plan de beste in de agenda.</p>
+    </div>
+    <div class="wk-date-row"><label><span>Vrijdag van het weekend</span><input type="date" id="wkDate" /></label></div>
+    <p id="wkStatus" class="wk-status">Bezig met laden…</p>
+
+    <h3 class="vn-h" style="margin-top:0.2rem;">Kandidaten</h3>
+    <div class="wk-top">
+      <button type="button" class="btn btn-primary" id="wkAddBtn">+ Kandidaat toevoegen</button>
+      <select id="wkSort" class="players-filter"><option value="votes">Meeste stemmen</option><option value="new">Nieuwst toegevoegd</option><option value="short">Kortste eerst</option></select>
+    </div>
+    <div id="wkPool" class="wk-list"></div>
+
+    <h3 class="vn-h" style="margin-top:1.6rem;">Agenda</h3>
+    <div id="wkAgenda"></div>
+  </main>
+  <div id="wkPickSheet" class="sheet" hidden>
+    <div class="sheet-inner">
+      <h2 id="wkPickTitle">Kandidaat toevoegen</h2>
+      <input id="wkPickSearch" type="search" class="search-input" style="width:100%;" placeholder="Zoek een spel of typ een eigen titel…" autocomplete="off" />
+      <div class="vn-chips" style="margin-top:0.6rem;">
+        <button type="button" class="vn-chip on" id="wkPickFit">Speelbaar met 4</button>
+        <button type="button" class="vn-chip" id="wkPickAll" hidden>Hele collectie</button>
+      </div>
+      <div id="wkPickList" class="wk-pick-list"></div>
+      <div class="sheet-actions"><button type="button" class="btn btn-ghost" id="wkPickClose">Klaar</button></div>
+    </div>
+  </div>
 
   <main id="duoView" hidden>
     <div class="oath-intro">
@@ -1868,6 +1956,8 @@
       document.getElementById('wouterView').hidden = tab !== 'wouter';
       document.getElementById('tonightView').hidden = tab !== 'tonight';
       document.getElementById('duoView').hidden = tab !== 'duo';
+      document.getElementById('wkView').hidden = tab !== 'wk';
+      if (tab === 'wk') { subscribeWk(); renderWk(); }
       if (tab === 'duo') { subscribeDuo(); renderDuo(); }
       if (tab === 'tonight') renderTonight();
       if (tab === 'games') {
@@ -3853,6 +3943,293 @@
     db.collection('duoGames').add({ bggId: b.id, title: b.title, addedBy: myName, addedAt: Date.now(), plays: [], again: false }).then(function () {
       duPickSheet.hidden = true;
     }).catch(function () { btn.disabled = false; alert('Kon spel niet toevoegen.'); });
+  });
+
+  // ===== v5: Weekend, kandidatenpoel + agenda (collecties "weekendPool", "weekendPlan", doc "weekendMeta/main") =====
+  var WK_DAYS = [{ k: 'fri', l: 'Vrijdag', off: 0 }, { k: 'sat', l: 'Zaterdag', off: 1 }, { k: 'sun', l: 'Zondag', off: 2 }];
+  var WK_SLOTS = [
+    { k: 'fri-nm', d: 'fri', l: 'Namiddag', t: 'vanaf 14u' },
+    { k: 'fri-av', d: 'fri', l: 'Avond', t: 'vanaf 18u' },
+    { k: 'sat-ov', d: 'sat', l: 'Ochtend', t: 'tot 12u' },
+    { k: 'sat-nm', d: 'sat', l: 'Namiddag', t: '12u tot 18u' },
+    { k: 'sat-av', d: 'sat', l: 'Avond', t: 'vanaf 18u' },
+    { k: 'sun-ov', d: 'sun', l: 'Ochtend', t: 'tot 12u' },
+    { k: 'sun-nm', d: 'sun', l: 'Namiddag', t: '12u tot 18u' },
+    { k: 'sun-av', d: 'sun', l: 'Avond', t: 'tot het einde' }
+  ];
+  var WK_MONTHS = ['jan', 'feb', 'mrt', 'apr', 'mei', 'jun', 'jul', 'aug', 'sep', 'okt', 'nov', 'dec'];
+  var wkPool = [], wkPlan = [], wkMeta = {}, wkLoaded = false, wkOpen = {}, wkPick = { mode: 'pool', slot: '', all: false }, wkDefer = false;
+  var wkView = document.getElementById('wkView'), wkPoolEl = document.getElementById('wkPool'), wkAgendaEl = document.getElementById('wkAgenda'), wkStatusEl = document.getElementById('wkStatus');
+  var wkPickSheet = document.getElementById('wkPickSheet'), wkPickList = document.getElementById('wkPickList'), wkPickSearch = document.getElementById('wkPickSearch');
+  var wkPickFit = document.getElementById('wkPickFit'), wkPickAll = document.getElementById('wkPickAll'), wkDateEl = document.getElementById('wkDate');
+
+  function wkMe() { return personOf(myName) || (myName || '').trim(); }
+  function wkSlot(k) { for (var i = 0; i < WK_SLOTS.length; i++) if (WK_SLOTS[i].k === k) return WK_SLOTS[i]; return null; }
+  function wkDay(k) { for (var i = 0; i < WK_DAYS.length; i++) if (WK_DAYS[i].k === k) return WK_DAYS[i]; return null; }
+  function wkParse(iso) { var m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(iso || ''); return m ? new Date(+m[1], +m[2] - 1, +m[3]) : null; }
+  function wkIso(d) { return d.getFullYear() + '-' + ('0' + (d.getMonth() + 1)).slice(-2) + '-' + ('0' + d.getDate()).slice(-2); }
+  // elke gekozen datum wordt de vrijdag van die weekendweek (ma-do: komende vrijdag, za/zo: de vrijdag ervoor)
+  function wkSnapFriday(iso) {
+    var d = wkParse(iso); if (!d) return '';
+    var w = d.getDay();
+    d.setDate(d.getDate() + (w === 6 ? -1 : w === 0 ? -2 : 5 - w));
+    return wkIso(d);
+  }
+  function wkDayLabel(dayKey) {
+    var f = wkParse(wkMeta.friday), dd = wkDay(dayKey);
+    if (!f || !dd) return '';
+    f.setDate(f.getDate() + dd.off);
+    return f.getDate() + ' ' + WK_MONTHS[f.getMonth()];
+  }
+  function wkMinutes(b) { return b ? (b.maxT || b.minT || 0) : 0; }
+  function wkDur(min) {
+    if (!min) return '';
+    var h = Math.floor(min / 60), m = min % 60;
+    return h ? h + 'u' + (m ? ' ' + ('0' + m).slice(-2) : '') : m + ' min';
+  }
+  function wkBgg(d) { return (d.bggId && bggIndex().id[d.bggId]) || bggIndex().t[normTitle(d.title)] || null; }
+  function wkThumb(d) { var b = wkBgg(d); return b && b.th ? IMG + b.th : ''; }
+  function wkVoted(d) { var me = wkMe(); return !!me && voteInfo({ voters: d.voters || [] }).people.concat(voteInfo({ voters: d.voters || [] }).extra).some(function (v) { return v === me; }); }
+  function wkSame(a, b) { return (a.bggId && a.bggId === b.bggId) || (!a.bggId && !b.bggId && normTitle(a.title) === normTitle(b.title)); }
+  function wkPlanned(d) { return wkPlan.filter(function (p) { return wkSame(p, d); }); }
+  function wkInPool(bggId, title) { return wkPool.some(function (d) { return bggId ? d.bggId === bggId : (!d.bggId && normTitle(d.title) === normTitle(title)); }); }
+  function wkSlotName(k) { var s = wkSlot(k), d = s && wkDay(s.d); return s ? d.l + ' ' + s.l.toLowerCase() : k; }
+  function wkSlotOptions(sel) {
+    return WK_SLOTS.map(function (s) { return '<option value="' + s.k + '"' + (s.k === sel ? ' selected' : '') + '>' + esc(wkSlotName(s.k)) + '</option>'; }).join('');
+  }
+
+  function subscribeWk() {
+    if (!db || wkLoaded) return;
+    wkLoaded = true;
+    var fail = function () { wkStatusEl.textContent = 'Kon het weekend niet laden.'; };
+    db.collection('weekendPool').onSnapshot(function (snap) {
+      wkPool = snap.docs.map(function (x) { return Object.assign({ id: x.id }, x.data()); });
+      renderWk(); if (!wkPickSheet.hidden) renderWkPick();
+    }, fail);
+    db.collection('weekendPlan').onSnapshot(function (snap) {
+      wkPlan = snap.docs.map(function (x) { return Object.assign({ id: x.id }, x.data()); });
+      renderWk();
+    }, fail);
+    db.doc('weekendMeta/main').onSnapshot(function (s) {
+      wkMeta = (s && s.exists ? s.data() : {}) || {};
+      renderWk();
+    }, fail);
+  }
+
+  function wkPoolCard(d, top) {
+    var b = wkBgg(d), vi = voteInfo({ voters: d.voters || [] }), voted = wkVoted(d), pl = wkPlanned(d);
+    var sub = b ? metaLine(b) : '';
+    var tags = '';
+    if (b && b.minPlayers && (b.minPlayers > 4 || (b.maxPlayers || b.minPlayers) < 4)) tags += '<span class="wk-tag warn">niet voor 4</span>';
+    pl.forEach(function (p) { tags += '<span class="wk-tag plan">' + esc(wkSlotName(p.slot)) + '</span>'; });
+    var names = vi.people.concat(vi.extra);
+    return '<div class="wk-card' + (top ? ' top' : '') + '">' +
+      '<div class="wk-card-head">' + coverHTML(wkThumb(d), d.title, 'vn-row-img') +
+        '<span class="vn-row-body"><span class="vn-row-title">' + esc(d.title) + '</span>' +
+        (sub ? '<span class="vn-row-sub">' + esc(sub) + '</span>' : '') +
+        (tags ? '<span class="vn-row-sub" style="display:flex;gap:0.3rem;flex-wrap:wrap;margin-top:0.2rem;">' + tags + '</span>' : '') + '</span>' +
+        '<button type="button" class="wk-vote' + (voted ? ' on' : '') + '" data-wk-vote="' + d.id + '" aria-label="Stem">👍 ' + vi.n + '</button></div>' +
+      '<div class="wk-card-foot">' + avatarsHTML(vi.people) +
+        '<span class="wk-names">' + (names.length ? esc(names.join(', ')) : 'nog geen stemmen') + '</span>' +
+        '<span class="wk-tools"><select class="wk-sel" data-wk-plan="' + d.id + '" aria-label="Inplannen"><option value="">Inplannen…</option>' + wkSlotOptions('') + '</select>' +
+        '<button class="icon-btn" data-wk-popdel="' + d.id + '" aria-label="Uit de poel halen">' + ICON_TRASH + '</button></span></div></div>';
+  }
+
+  function wkEntryHTML(p) {
+    var b = wkBgg(p), open = !!wkOpen[p.id];
+    var sub = [];
+    if (p.at) sub.push(p.at.replace(':', 'u'));
+    if (b && wkMinutes(b)) sub.push('± ' + wkDur(wkMinutes(b)));
+    if (b && playersText(b)) sub.push(playersText(b) + ' sp.');
+    if (p.note) sub.push(p.note);
+    var head = '<div class="wk-entry-head"><button type="button" class="wk-check' + (p.done ? ' on' : '') + '" data-wk-done="' + p.id + '" aria-label="Gespeeld">✓</button>' +
+      '<button type="button" class="wk-entry-main" data-wk-toggle="' + p.id + '">' + coverHTML(wkThumb(p), p.title, 'vn-row-img') +
+      '<span class="vn-row-body"><span class="vn-row-title">' + esc(p.title) + '</span>' + (sub.length ? '<span class="vn-row-sub">' + esc(sub.join(' · ')) + '</span>' : '') + '</span>' + ICON_CHEV + '</button></div>';
+    var panel = open ? '<div class="wk-panel">' +
+      '<input type="time" value="' + esc(p.at || '') + '" data-wk-time="' + p.id + '" aria-label="Uur" />' +
+      '<input type="text" value="' + esc(p.note || '') + '" placeholder="Notitie" maxlength="80" data-wk-note="' + p.id + '" />' +
+      '<select class="wk-sel" data-wk-move="' + p.id + '" aria-label="Verplaatsen">' + wkSlotOptions(p.slot) + '</select>' +
+      '<button class="icon-btn" data-wk-del="' + p.id + '" aria-label="Uit de agenda halen">' + ICON_TRASH + '</button></div>' : '';
+    return '<div class="wk-entry' + (open ? ' open' : '') + (p.done ? ' done' : '') + '">' + head + panel + '</div>';
+  }
+
+  function renderWk() {
+    if (wkView.hidden) return;
+    var a = document.activeElement;
+    if (a && wkView.contains(a) && a.tagName === 'INPUT' && (a.dataset.wkTime !== undefined || a.dataset.wkNote !== undefined)) { wkDefer = true; return; }
+    if (document.activeElement !== wkDateEl) wkDateEl.value = wkMeta.friday || '';
+
+    // status
+    var min = 0;
+    wkPlan.forEach(function (p) { min += wkMinutes(wkBgg(p)); });
+    var st = [wkPool.length + (wkPool.length === 1 ? ' kandidaat' : ' kandidaten'), wkPlan.length + ' ingepland'];
+    if (min) st.push('± ' + wkDur(min) + ' speeltijd');
+    var f = wkParse(wkMeta.friday);
+    if (f) {
+      var t = new Date(); t.setHours(0, 0, 0, 0);
+      var n = Math.round((f - t) / 86400000);
+      st.push(n > 1 ? 'nog ' + n + ' dagen' : n === 1 ? 'morgen begint het' : n >= -2 ? 'het weekend is bezig' : 'voorbij');
+    }
+    wkStatusEl.textContent = st.join(' · ');
+
+    // kandidaten
+    var sort = document.getElementById('wkSort').value;
+    var list = wkPool.slice();
+    var votes = function (d) { return voteInfo({ voters: d.voters || [] }).n; };
+    if (sort === 'new') list.sort(function (x, y) { return (y.addedAt || 0) - (x.addedAt || 0); });
+    else if (sort === 'short') list.sort(function (x, y) { return (wkMinutes(wkBgg(x)) || 9999) - (wkMinutes(wkBgg(y)) || 9999); });
+    else list.sort(function (x, y) { return votes(y) - votes(x) || (y.addedAt || 0) - (x.addedAt || 0); });
+    var topVotes = list.length && sort === 'votes' ? votes(list[0]) : 0;
+    if (topVotes && list.every(function (d) { return votes(d) === topVotes; })) topVotes = 0; // alles gelijk: niemand licht op
+    wkPoolEl.innerHTML = list.length ? list.map(function (d) { return wkPoolCard(d, topVotes > 0 && votes(d) === topVotes); }).join('') :
+      '<div class="wk-empty">De poel is nog leeg. Zet er spellen in en stem op je favorieten.</div>';
+
+    // agenda
+    wkAgendaEl.innerHTML = WK_DAYS.map(function (d) {
+      var dl = wkDayLabel(d.k);
+      return '<section class="wk-day"><h3 class="vn-h" style="margin-top:0.4rem;">' + d.l + (dl ? '<span class="wk-day-date">' + esc(dl) + '</span>' : '') + '</h3>' +
+        WK_SLOTS.filter(function (s) { return s.d === d.k; }).map(function (s) {
+          var items = wkPlan.filter(function (p) { return p.slot === s.k; }).sort(function (x, y) {
+            if (!!x.at !== !!y.at) return x.at ? -1 : 1;
+            return (x.at || '').localeCompare(y.at || '') || (x.addedAt || 0) - (y.addedAt || 0);
+          });
+          var sum = 0; items.forEach(function (p) { sum += wkMinutes(wkBgg(p)); });
+          return '<div class="wk-slot"><div class="wk-slot-h"><b>' + s.l + '</b><i>' + s.t + '</i>' + (sum ? '<span class="wk-slot-sum">± ' + wkDur(sum) + '</span>' : '') + '</div>' +
+            items.map(wkEntryHTML).join('') +
+            '<button type="button" class="vn-chip" data-wk-addslot="' + s.k + '">+ Spel of activiteit</button></div>';
+        }).join('') + '</section>';
+    }).join('');
+  }
+  document.getElementById('wkSort').addEventListener('change', renderWk);
+  wkView.addEventListener('focusout', function () { if (wkDefer) { wkDefer = false; setTimeout(renderWk, 60); } });
+
+  wkDateEl.addEventListener('change', function () {
+    var v = wkSnapFriday(wkDateEl.value);
+    if (!v) { if (db) db.doc('weekendMeta/main').set({ friday: '' }, { merge: true }); return; }
+    wkDateEl.value = v;
+    if (db) db.doc('weekendMeta/main').set({ friday: v }, { merge: true }).catch(function () { alert('Kon de datum niet opslaan.'); });
+  });
+
+  function wkAddPlan(slot, title, bggId) {
+    ensureName(function () {
+      if (!db) return;
+      db.collection('weekendPlan').add({ slot: slot, title: title, bggId: bggId || '', at: '', note: '', done: false, addedBy: myName, addedAt: Date.now() })
+        .catch(function () { alert('Kon dit niet inplannen.'); });
+    });
+  }
+
+  wkView.addEventListener('click', function (e) {
+    var t = e.target.closest('[data-wk-vote]');
+    if (t && db) {
+      ensureName(function () {
+        var id = t.dataset.wkVote, d = wkPool.filter(function (x) { return x.id === id; })[0];
+        if (!d) return;
+        var me = wkMe(), FV = firebase.firestore.FieldValue;
+        var mine = (d.voters || []).filter(function (v) { return (personOf(v) || v) === me; });
+        var upd = mine.length ? { voters: FV.arrayRemove.apply(FV, mine) } : { voters: FV.arrayUnion(me) };
+        db.doc('weekendPool/' + id).update(upd).catch(function () { alert('Kon je stem niet opslaan.'); });
+      });
+      return;
+    }
+    t = e.target.closest('[data-wk-popdel]');
+    if (t && db) {
+      var dd = wkPool.filter(function (x) { return x.id === t.dataset.wkPopdel; })[0];
+      if (dd && confirm('"' + dd.title + '" uit de poel halen? De stemmen gaan mee weg.')) db.doc('weekendPool/' + dd.id).delete().catch(function () { alert('Kon dit niet verwijderen.'); });
+      return;
+    }
+    t = e.target.closest('[data-wk-toggle]');
+    if (t) { wkOpen[t.dataset.wkToggle] = !wkOpen[t.dataset.wkToggle]; renderWk(); return; }
+    t = e.target.closest('[data-wk-done]');
+    if (t && db) {
+      var p = wkPlan.filter(function (x) { return x.id === t.dataset.wkDone; })[0];
+      if (p) db.doc('weekendPlan/' + p.id).update({ done: !p.done }).catch(function () { alert('Kon dit niet opslaan.'); });
+      return;
+    }
+    t = e.target.closest('[data-wk-del]');
+    if (t && db) { db.doc('weekendPlan/' + t.dataset.wkDel).delete().catch(function () { alert('Kon dit niet verwijderen.'); }); return; }
+    t = e.target.closest('[data-wk-addslot]');
+    if (t) {
+      ensureName(function () {
+        wkPick = { mode: 'slot', slot: t.dataset.wkAddslot, all: !wkPool.length };
+        openWkPick();
+      });
+    }
+  });
+  wkView.addEventListener('change', function (e) {
+    var t = e.target;
+    if (!db) return;
+    if (t.dataset.wkPlan !== undefined) {
+      var d = wkPool.filter(function (x) { return x.id === t.dataset.wkPlan; })[0], slot = t.value;
+      t.value = '';
+      if (d && slot) wkAddPlan(slot, d.title, d.bggId);
+    } else if (t.dataset.wkMove !== undefined) {
+      db.doc('weekendPlan/' + t.dataset.wkMove).update({ slot: t.value }).catch(function () { alert('Kon dit niet verplaatsen.'); });
+    } else if (t.dataset.wkTime !== undefined) {
+      db.doc('weekendPlan/' + t.dataset.wkTime).update({ at: t.value || '' }).catch(function () { alert('Kon het uur niet opslaan.'); });
+    } else if (t.dataset.wkNote !== undefined) {
+      db.doc('weekendPlan/' + t.dataset.wkNote).update({ note: t.value.trim() }).catch(function () { alert('Kon de notitie niet opslaan.'); });
+    }
+  });
+
+  // --- kiezen: kandidaat toevoegen of iets inplannen ---
+  function openWkPick() {
+    document.getElementById('wkPickTitle').textContent = wkPick.mode === 'slot' ? 'Inplannen: ' + wkSlotName(wkPick.slot) : 'Kandidaat toevoegen';
+    wkPickAll.hidden = wkPick.mode !== 'slot';
+    wkPickAll.classList.toggle('on', wkPick.all);
+    wkPickSearch.value = '';
+    renderWkPick();
+    wkPickSheet.hidden = false;
+    wkPickSearch.focus();
+  }
+  function renderWkPick() {
+    var raw = wkPickSearch.value.trim(), q = normTitle(raw), fit = wkPickFit.classList.contains('on');
+    var rows = [], html = '';
+    var fitsFour = function (b) { return !b || !b.minPlayers || (b.minPlayers <= 4 && (b.maxPlayers || b.minPlayers) >= 4); };
+    if (wkPick.mode === 'slot' && !wkPick.all) {
+      rows = wkPool.filter(function (d) { return (!q || normTitle(d.title).indexOf(q) !== -1) && (!fit || fitsFour(wkBgg(d))); })
+        .sort(function (x, y) { return voteInfo({ voters: y.voters || [] }).n - voteInfo({ voters: x.voters || [] }).n; })
+        .map(function (d) {
+          var b = wkBgg(d), n = voteInfo({ voters: d.voters || [] }).n, pl = wkPlanned(d).length;
+          return { key: 'pool:' + d.id, title: d.title, thumb: wkThumb(d), sub: [b ? metaLine(b) : '', n + (n === 1 ? ' stem' : ' stemmen'), pl ? 'al ingepland' : ''].filter(Boolean).join(' · '), added: false };
+        });
+    } else {
+      rows = BGG_GAMES.filter(function (b) { return (!q || b.title.toLowerCase().indexOf(q) !== -1) && (!fit || fitsFour(b)); })
+        .sort(function (x, y) { return (y.rating || 0) - (x.rating || 0); }).slice(0, 80)
+        .map(function (b) {
+          var added = wkPick.mode === 'pool' && wkInPool(b.id, b.title);
+          return { key: 'bgg:' + b.id, title: b.title, thumb: b.th ? IMG + b.th : '', sub: [metaLine(b), added ? 'al in de poel' : ''].filter(Boolean).join(' · '), added: added };
+        });
+    }
+    if (raw) html += '<button type="button" class="wk-pick" data-wk-pick="custom:' + esc(raw) + '">' + coverHTML('', raw, 'wk-pick-img') + '<span class="vn-row-body"><span class="vn-row-title">+ "' + esc(raw) + '"</span><span class="vn-row-sub">' + (wkPick.mode === 'slot' ? 'als eigen item (bv. een spel van buiten de collectie, pizza)' : 'als eigen kandidaat, ook buiten de collectie') + '</span></span></button>';
+    html += rows.map(function (r) {
+      return '<button type="button" class="wk-pick' + (r.added ? ' is-added' : '') + '" data-wk-pick="' + esc(r.key) + '"' + (r.added ? ' disabled' : '') + '>' + coverHTML(r.thumb, r.title, 'wk-pick-img') +
+        '<span class="vn-row-body"><span class="vn-row-title">' + esc(r.title) + '</span><span class="vn-row-sub">' + esc(r.sub) + '</span></span></button>';
+    }).join('');
+    if (!rows.length && !raw) html = '<p class="no-plays">' + (wkPick.mode === 'slot' && !wkPick.all ? 'Nog geen kandidaten. Kies "Hele collectie".' : 'Niets gevonden.') + '</p>';
+    wkPickList.innerHTML = html;
+  }
+  document.getElementById('wkAddBtn').addEventListener('click', function () {
+    ensureName(function () { wkPick = { mode: 'pool', slot: '', all: true }; openWkPick(); });
+  });
+  document.getElementById('wkPickClose').addEventListener('click', function () { wkPickSheet.hidden = true; });
+  wkPickSheet.addEventListener('click', function (e) { if (e.target === wkPickSheet) wkPickSheet.hidden = true; });
+  wkPickSearch.addEventListener('input', renderWkPick);
+  wkPickFit.addEventListener('click', function () { wkPickFit.classList.toggle('on'); renderWkPick(); });
+  wkPickAll.addEventListener('click', function () { wkPick.all = !wkPick.all; wkPickAll.classList.toggle('on', wkPick.all); renderWkPick(); });
+  wkPickList.addEventListener('click', function (e) {
+    var btn = e.target.closest('[data-wk-pick]');
+    if (!btn || btn.disabled || !db) return;
+    var parts = btn.dataset.wkPick.split(':'), kind = parts.shift(), val = parts.join(':');
+    var title = '', bggId = '';
+    if (kind === 'bgg') { var b = bggIndex().id[val]; if (!b) return; title = b.title; bggId = b.id; }
+    else if (kind === 'pool') { var d = wkPool.filter(function (x) { return x.id === val; })[0]; if (!d) return; title = d.title; bggId = d.bggId || ''; }
+    else { title = val.slice(0, 80); }
+    if (!title) return;
+    if (wkPick.mode === 'slot') { wkAddPlan(wkPick.slot, title, bggId); wkPickSheet.hidden = true; return; }
+    if (wkInPool(bggId, title)) return;
+    btn.disabled = true;
+    db.collection('weekendPool').add({ bggId: bggId, title: title, addedBy: myName, addedAt: Date.now(), voters: [wkMe()] })
+      .catch(function () { btn.disabled = false; alert('Kon dit niet toevoegen.'); });
   });
   // --- boot ---
   var firebaseConfig = {
