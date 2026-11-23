@@ -965,7 +965,7 @@
       <section class="manual-block">
         <h3>🏕️ Weekend</h3>
         <ul>
-          <li>Kandidaten: zet spellen uit de collectie in de poel en stem met de duim. Je hebt drie stemmen per weekend. Wie het meeste stemmen heeft, staat bovenaan.</li>
+          <li>Kandidaten: zet spellen uit de collectie in de poel en stem met de duim. Wie het meeste stemmen heeft, staat bovenaan.</li>
           <li>Agenda: vrijdagnamiddag tot zondagavond in blokken. Plan een kandidaat in via het keuzemenu, of voeg zelf een spel of een eigen item toe (bv. avondeten). Elk blok heeft een tijdbudget en een balk die laat zien of alles past.</li>
           <li>Tik onder een blok op "spelers · budget" om aan te geven wie erbij is en hoe lang het blok duurt. Spellen die niet passen bij het aantal spelers krijgen een waarschuwing.</li>
           <li>"Stel voor" verdeelt de best gestemde kandidaten over de blokken. Je ziet eerst een voorstel en past toe wat je wilt.</li>
@@ -4238,7 +4238,6 @@
       var n = Math.round((f - t) / 86400000);
       st.push(n > 1 ? 'nog ' + n + ' dagen' : n === 1 ? 'morgen begint het' : n >= -2 ? 'het weekend is bezig' : 'voorbij');
     }
-    if (wkMe()) st.push('jij hebt nog ' + Math.max(0, WK_MAX_VOTES - wkMyVotes()) + ' van ' + WK_MAX_VOTES + ' stemmen');
     wkStatusEl.textContent = st.join(' · ');
 
     // kandidaten
@@ -4323,7 +4322,6 @@
         if (!d) return;
         var me = wkMe(), FV = firebase.firestore.FieldValue;
         var mine = (d.voters || []).filter(function (v) { return (personOf(v) || v) === me; });
-        if (!mine.length && wkMyVotes() >= WK_MAX_VOTES) { alert('Je hebt al ' + WK_MAX_VOTES + ' stemmen gebruikt. Haal eerst een stem weg bij een ander spel.'); return; }
         var upd = mine.length ? { voters: FV.arrayRemove.apply(FV, mine) } : { voters: FV.arrayUnion(me) };
         db.doc('weekendPool/' + id).update(upd).catch(function () { alert('Kon je stem niet opslaan.'); });
       });
@@ -4566,7 +4564,7 @@
     if (wkPick.mode === 'slot') { wkAddPlan(wkPick.slot, title, bggId); wkPickSheet.hidden = true; return; }
     if (wkInPool(bggId, title)) return;
     btn.disabled = true;
-    db.collection('weekendPool').add({ bggId: bggId, title: title, addedBy: myName, addedAt: Date.now(), wk: wkCur(), voters: wkMyVotes() < WK_MAX_VOTES ? [wkMe()] : [] })
+    db.collection('weekendPool').add({ bggId: bggId, title: title, addedBy: myName, addedAt: Date.now(), wk: wkCur(), voters: [wkMe()] })
       .catch(function () { btn.disabled = false; alert('Kon dit niet toevoegen.'); });
   });
   // --- boot ---
